@@ -113,7 +113,7 @@ export default async function ContactoPage({
       <section
         className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          height: "calc(100vh - 64px)",
+          minHeight: "calc(100svh - 60px)",
         }}
       >
         <Image

@@ -17,7 +17,7 @@ export function HeroSection() {
     <section
       id="top"
       className="relative flex flex-col justify-end overflow-hidden"
-      style={{ height: "calc(100vh - 64px)" }}
+      style={{ minHeight: "calc(100svh - 60px)" }}
     >
       <video
         autoPlay
@@ -25,7 +25,7 @@ export function HeroSection() {
         loop
         playsInline
         poster="/site-assets/premoldeados-de-hormigon.jpg"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-[72%_center] sm:object-center"
       >
         <source src="/VideoHero.mp4" type="video/mp4" />
         <Image
@@ -37,8 +37,7 @@ export function HeroSection() {
         />
       </video>
 
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.45)_34%,rgba(0,0,0,0.82)_100%)]" />
-      <div className="absolute inset-x-0 top-0 h-[3px] bg-brand-yellow" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.48)_0%,rgba(0,0,0,0.42)_32%,rgba(0,0,0,0.84)_100%)]" />
 
       <div className="relative z-10 w-full px-5 pb-10 pt-28 sm:px-8 sm:pb-12 lg:px-10 lg:pb-16">
         <div className="mx-auto w-full max-w-[1600px]">

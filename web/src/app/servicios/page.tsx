@@ -95,14 +95,18 @@ export default function ServiciosPage() {
       <section
         className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          height: "calc(100vh - 64px)",
-          borderBottom: "3px solid #ffd239",
-          backgroundImage: "url('/fotos servicios/herobg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          minHeight: "calc(100svh - 60px)",
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.16)_0%,rgba(0,0,0,0.52)_50%,rgba(0,0,0,0.88)_100%)]" />
+        <Image
+          src="/fotos servicios/herobg.png"
+          alt="Servicios Cimalco Patagonia"
+          fill
+          priority
+          className="object-cover object-[72%_center] sm:object-center"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42)_0%,rgba(0,0,0,0.52)_50%,rgba(0,0,0,0.88)_100%)]" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
