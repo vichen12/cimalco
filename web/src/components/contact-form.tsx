@@ -15,10 +15,10 @@ import {
 } from "@/lib/contact";
 
 const inputCls =
-  "w-full rounded-[11px] border border-black/10 bg-[#fafaf7] px-4 py-2.5 text-sm text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ffd239]/12";
+  "w-full rounded-[10px] border border-black/10 bg-[#fafaf7] px-3 py-2 text-[13px] text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ffd239]/12";
 
 const labelCls =
-  "block text-[10px] font-semibold uppercase tracking-[0.2em] text-black/38 mb-1.5";
+  "block text-[9px] font-bold uppercase tracking-[0.2em] text-black/36 mb-1";
 
 type ContactFormPrefill = {
   line?: string;
@@ -58,30 +58,30 @@ function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="overflow-hidden rounded-[14px] border border-black/8">
+    <div>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-black/[0.02]"
+        className="flex w-full items-center justify-between px-4 py-2.5 text-left transition hover:bg-black/[0.02]"
       >
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-charcoal">
+          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-brand-charcoal">
             {title}
           </span>
           {badge && (
-            <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#1a1000]">
+            <span className="rounded-full bg-brand-yellow px-1.5 py-0.5 text-[8px] font-bold text-[#1a1000]">
               {badge}
             </span>
           )}
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-black/30 transition-transform duration-200",
+            "h-3.5 w-3.5 text-black/28 transition-transform duration-200",
             open && "rotate-180",
           )}
         />
       </button>
-      {open && <div className="border-t border-black/6 px-4 pb-4 pt-3">{children}</div>}
+      {open && <div className="border-t border-black/6 px-4 pb-3 pt-2.5">{children}</div>}
     </div>
   );
 }
@@ -261,7 +261,7 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
               badge={selectedInterests.length > 0 ? String(selectedInterests.length) : undefined}
               defaultOpen
             >
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {contactInterestOptions.map((item) => {
                   const active = selectedInterests.includes(item);
                   return (
@@ -270,9 +270,9 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                       type="button"
                       onClick={() => toggleInterest(item)}
                       className={cn(
-                        "rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-150",
+                        "rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] transition-all duration-150",
                         active
-                          ? "border-[#ffd239] bg-[#ffd239] text-[#1a1000] shadow-[0_2px_8px_rgba(255,210,57,0.26)]"
+                          ? "border-[#ffd239] bg-[#ffd239] text-[#1a1000]"
                           : "border-black/10 bg-white text-black/44 hover:border-black/18 hover:text-brand-charcoal",
                       )}
                     >
@@ -282,7 +282,7 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                 })}
               </div>
               {errors.interests && (
-                <p className="mt-2 text-[11px] text-red-500">{errors.interests.message}</p>
+                <p className="mt-1.5 text-[10px] text-red-500">{errors.interests.message}</p>
               )}
             </Section>
 
@@ -291,7 +291,7 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
               title="Tipo de obra"
               badge={selectedObra ? "1" : undefined}
             >
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {contactObraOptions.map((obra) => {
                   const active = selectedObra === obra;
                   return (
@@ -300,7 +300,7 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                       type="button"
                       onClick={() => setValue("obra", active ? "" : obra)}
                       className={cn(
-                        "rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.06em] transition-all duration-150",
+                        "rounded-full border px-2.5 py-1 text-[10px] font-medium tracking-[0.06em] transition-all duration-150",
                         active
                           ? "border-brand-charcoal bg-brand-charcoal text-white"
                           : "border-black/10 bg-white text-black/44 hover:border-black/20 hover:text-brand-charcoal",
@@ -319,36 +319,36 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
               badge={nameVal && emailVal && companyVal ? "✓" : undefined}
               defaultOpen
             >
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label htmlFor="name" className={labelCls}>Nombre *</label>
                   <input id="name" type="text" className={inputCls} placeholder="Tu nombre" {...register("name")} />
-                  {errors.name && <p className="mt-1 text-[10px] text-red-500">{errors.name.message}</p>}
-                </div>
-                <div>
-                  <label htmlFor="email" className={labelCls}>Email *</label>
-                  <input id="email" type="email" className={inputCls} placeholder="tuemail@empresa.com" {...register("email")} />
-                  {errors.email && <p className="mt-1 text-[10px] text-red-500">{errors.email.message}</p>}
-                </div>
-                <div>
-                  <label htmlFor="company" className={labelCls}>Empresa o rubro *</label>
-                  <input id="company" type="text" className={inputCls} placeholder="Constructora, municipio..." {...register("company")} />
-                  {errors.company && <p className="mt-1 text-[10px] text-red-500">{errors.company.message}</p>}
+                  {errors.name && <p className="mt-0.5 text-[10px] text-red-500">{errors.name.message}</p>}
                 </div>
                 <div>
                   <label htmlFor="phone" className={labelCls}>Telefono</label>
-                  <input id="phone" type="tel" className={inputCls} placeholder="+54 9 299 ..." {...register("phone")} />
+                  <input id="phone" type="tel" className={inputCls} placeholder="+54 9 ..." {...register("phone")} />
+                </div>
+                <div className="col-span-2">
+                  <label htmlFor="email" className={labelCls}>Email *</label>
+                  <input id="email" type="email" className={inputCls} placeholder="tuemail@empresa.com" {...register("email")} />
+                  {errors.email && <p className="mt-0.5 text-[10px] text-red-500">{errors.email.message}</p>}
+                </div>
+                <div className="col-span-2">
+                  <label htmlFor="company" className={labelCls}>Empresa o rubro *</label>
+                  <input id="company" type="text" className={inputCls} placeholder="Constructora, municipio, estudio..." {...register("company")} />
+                  {errors.company && <p className="mt-0.5 text-[10px] text-red-500">{errors.company.message}</p>}
                 </div>
               </div>
             </Section>
 
             {/* Zona + Mensaje */}
             <Section title="Tu proyecto">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <label htmlFor="zone" className={labelCls}>
                     <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
+                      <MapPin className="h-2.5 w-2.5" />
                       Zona de entrega
                     </span>
                   </label>
@@ -364,27 +364,27 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                   <label htmlFor="message" className={labelCls}>Contanos tu proyecto *</label>
                   <textarea
                     id="message"
-                    rows={3}
+                    rows={2}
                     className={cn(inputCls, "resize-none")}
-                    placeholder="Tipo de obra, volumen estimado, fecha de inicio..."
+                    placeholder="Tipo de obra, volumen estimado, fecha estimada..."
                     {...register("message")}
                   />
-                  {errors.message && <p className="mt-1 text-[10px] text-red-500">{errors.message.message}</p>}
+                  {errors.message && <p className="mt-0.5 text-[10px] text-red-500">{errors.message.message}</p>}
                 </div>
               </div>
             </Section>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-3">
-            <p className="text-[10px] text-black/28">* Requeridos</p>
+          <div className="flex items-center justify-between border-t border-black/6 px-4 py-2.5">
+            <p className="text-[9px] text-black/24">* Requeridos</p>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1a1000] shadow-[0_4px_16px_rgba(255,210,57,0.26)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#1a1000] shadow-[0_3px_12px_rgba(255,210,57,0.24)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
             >
               {isSubmitting ? "Enviando..." : "Enviar consulta"}
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </form>

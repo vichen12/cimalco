@@ -160,12 +160,12 @@ export default async function ContactoPage({
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-[1600px] px-5 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-20">
-        <div className="mb-7 sm:mb-10">
+      <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-8 sm:py-12 lg:px-10 lg:py-20">
+        <div className="mb-5 sm:mb-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/36">
             Contacto comercial
           </p>
-          <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.8rem)] uppercase leading-[0.9] tracking-[0.04em] text-brand-charcoal">
+          <h2 className="mt-2 font-display text-[clamp(1.6rem,4vw,3.8rem)] uppercase leading-[0.9] tracking-[0.04em] text-brand-charcoal">
             Contanos que necesita
             <span className="block text-brand-yellow">tu obra.</span>
           </h2>
