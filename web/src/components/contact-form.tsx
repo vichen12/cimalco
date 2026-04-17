@@ -28,6 +28,28 @@ type SubmitResult = {
   emailStatus: "sent" | "pending_config" | "failed";
 };
 
+function openWhatsAppInNewTab(
+  url: string,
+  pendingWindow?: Window | null,
+) {
+  if (typeof window === "undefined") return;
+
+  if (pendingWindow && !pendingWindow.closed) {
+    pendingWindow.location.href = url;
+    pendingWindow.focus();
+    return;
+  }
+
+  const nextWindow = window.open(url, "_blank", "noopener,noreferrer");
+
+  if (nextWindow) {
+    nextWindow.focus();
+    return;
+  }
+
+  window.location.assign(url);
+}
+
 export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const [submitted, setSubmitted] = useState(false);
   const [submissionError, setSubmissionError] = useState("");
@@ -93,6 +115,10 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const onSubmit = async (values: ContactSubmission) => {
     setSubmissionError("");
     const fallbackWhatsappUrl = buildWhatsappUrl(values);
+    const pendingWhatsappWindow =
+      typeof window !== "undefined"
+        ? window.open("", "_blank", "noopener,noreferrer")
+        : null;
 
     try {
       const response = await fetch("/api/contact", {
@@ -123,7 +149,10 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
       }
 
       if (typeof window !== "undefined") {
-        window.location.assign(nextResult.whatsappUrl);
+        openWhatsAppInNewTab(
+          nextResult.whatsappUrl,
+          pendingWhatsappWindow,
+        );
         return;
       }
 
@@ -147,7 +176,10 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
       );
 
       if (typeof window !== "undefined") {
-        window.location.assign(fallbackWhatsappUrl);
+        openWhatsAppInNewTab(
+          fallbackWhatsappUrl,
+          pendingWhatsappWindow,
+        );
       }
     }
   };
