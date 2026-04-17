@@ -151,13 +151,13 @@ export default function CatalogoPage() {
           alt="Catalogo Cimalco Patagonia"
           fill
           priority
-          className="object-cover object-[70%_30%] sm:object-[center_30%]"
+          className="object-cover object-[center_60%] sm:object-[center_30%]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42)_0%,rgba(0,0,0,0.55)_48%,rgba(0,0,0,0.88)_100%)]" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
+          className="pointer-events-none absolute inset-0 hidden items-end justify-end overflow-hidden select-none sm:flex"
         >
           <span
             className="font-display font-bold uppercase"
