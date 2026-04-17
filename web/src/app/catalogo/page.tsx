@@ -141,16 +141,20 @@ export default function CatalogoPage() {
       <SiteHeader />
 
       <section
-        className="relative flex flex-col justify-center overflow-hidden"
+        className="relative flex flex-col justify-end overflow-hidden"
         style={{
           height: "calc(100vh - 64px)",
-          borderBottom: "3px solid #ffd239",
-          backgroundImage: "url('/site-assets/slider3.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.55)_48%,rgba(0,0,0,0.88)_100%)]" />
+        <Image
+          src="/site-assets/slider3.png"
+          alt="Catalogo Cimalco Patagonia"
+          fill
+          priority
+          className="object-cover object-[70%_30%] sm:object-[center_30%]"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42)_0%,rgba(0,0,0,0.55)_48%,rgba(0,0,0,0.88)_100%)]" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
@@ -170,7 +174,7 @@ export default function CatalogoPage() {
           </span>
         </div>
 
-        <div className="relative z-10 px-5 py-16 sm:px-8 lg:px-10 lg:py-20">
+        <div className="relative z-10 px-5 pb-10 pt-24 sm:px-8 sm:pb-12 lg:px-10 lg:pb-16">
           <div className="mx-auto w-full max-w-[1600px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/36">
               Catalogo 2025
@@ -208,7 +212,7 @@ export default function CatalogoPage() {
               </Button>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+            <div className="mt-10 hidden gap-4 lg:grid lg:grid-cols-3">
               {catalogSections.map((section) => (
                 <a
                   key={section.id}
