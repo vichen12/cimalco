@@ -81,6 +81,9 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: [absoluteUrl(defaultOgImage)],
   },
+  verification: {
+    google: "ElGSc_y4I82ntwkoZYiRIhoVnPmcupyWRd1qZ7lzO_8",
+  },
   robots: {
     index: true,
     follow: true,

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Building2, Clock3, ShieldCheck, Zap } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 import { SiteFooter } from "@/components/site-footer";
@@ -113,13 +114,17 @@ export default async function ContactoPage({
         className="relative flex flex-col justify-center overflow-hidden"
         style={{
           height: "calc(100vh - 64px)",
-          borderBottom: "3px solid #ffd239",
-          backgroundImage: "url('/foto contacto.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14)_0%,rgba(0,0,0,0.50)_50%,rgba(0,0,0,0.88)_100%)]" />
+        <Image
+          src="/foto contacto.png"
+          alt="Contacto Cimalco Patagonia"
+          fill
+          priority
+          className="object-cover object-[72%_30%] sm:object-[center_30%]"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.5)_50%,rgba(0,0,0,0.88)_100%)]" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
@@ -155,8 +160,8 @@ export default async function ContactoPage({
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-[1600px] px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-        <div className="mb-10">
+      <main className="mx-auto w-full max-w-[1600px] px-5 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-20">
+        <div className="mb-7 sm:mb-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/36">
             Contacto comercial
           </p>

@@ -45,29 +45,17 @@ body {
 }
 
 /* ── Square grid texture overlay ── */
-html::before,
-html::after {
+html::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-}
-
-html::before {
   background-image:
-    linear-gradient(rgba(45, 45, 45, 0.038) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45, 45, 45, 0.038) 1px, transparent 1px);
+    linear-gradient(rgba(45, 45, 45, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 45, 45, 0.028) 1px, transparent 1px);
   background-size: 28px 28px;
   opacity: 0.8;
-}
-
-html::after {
-  background-image:
-    linear-gradient(rgba(255, 210, 57, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 210, 57, 0.12) 1px, transparent 1px);
-  background-size: 112px 112px;
-  opacity: 0.7;
 }
 
 a {

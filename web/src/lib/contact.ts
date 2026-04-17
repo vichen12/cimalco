@@ -19,6 +19,16 @@ const optionalText = z
   .nullable()
   .transform((value) => value?.trim() ?? "");
 
+export const contactObraOptions = [
+  "Vial / infraestructura",
+  "Urbanismo / municipal",
+  "Oil & Gas",
+  "Energia",
+  "Industrial",
+  "Residencial / privado",
+  "Otro",
+] as const;
+
 export const contactSubmissionSchema = z.object({
   name: z.string().trim().min(2, "Escribi tu nombre"),
   email: z.string().trim().email("Escribi un email valido"),
@@ -27,6 +37,8 @@ export const contactSubmissionSchema = z.object({
   interests: z
     .array(z.string().trim())
     .min(1, "Selecciona al menos una linea"),
+  obra: optionalText,
+  zone: optionalText,
   message: z.string().trim().min(12, "Contanos un poco mas"),
   line: optionalText,
   group: optionalText,
@@ -128,6 +140,8 @@ export function buildWhatsappMessage(payload: ContactSubmission) {
 
   pushIfValue(lines, "Telefono", payload.phone);
   lines.push(`Lineas de interes: ${formatContactInterests(payload.interests)}`);
+  pushIfValue(lines, "Tipo de obra", payload.obra);
+  pushIfValue(lines, "Zona de entrega", payload.zone);
   pushIfValue(lines, "Grupo", payload.group);
   pushIfValue(lines, "Item", payload.item);
   lines.push("");

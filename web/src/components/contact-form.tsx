@@ -3,18 +3,22 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, CheckCircle2, MessageCircleWarning } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronDown, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   buildWhatsappUrl,
   contactInterestOptions,
+  contactObraOptions,
   contactSubmissionSchema,
   type ContactSubmissionInput,
   type ContactSubmission,
 } from "@/lib/contact";
 
-const inputClassName =
-  "w-full rounded-[14px] border border-black/10 bg-[#fafaf7] px-5 py-3.5 text-sm text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#ffd239]/14";
+const inputCls =
+  "w-full rounded-[11px] border border-black/10 bg-[#fafaf7] px-4 py-2.5 text-sm text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ffd239]/12";
+
+const labelCls =
+  "block text-[10px] font-semibold uppercase tracking-[0.2em] text-black/38 mb-1.5";
 
 type ContactFormPrefill = {
   line?: string;
@@ -28,32 +32,64 @@ type SubmitResult = {
   emailStatus: "sent" | "pending_config" | "failed";
 };
 
-function openWhatsAppInNewTab(
-  url: string,
-  pendingWindow?: Window | null,
-) {
+function openWhatsAppInNewTab(url: string, pendingWindow?: Window | null) {
   if (typeof window === "undefined") return;
-
   if (pendingWindow && !pendingWindow.closed) {
     pendingWindow.location.href = url;
     pendingWindow.focus();
     return;
   }
-
-  const nextWindow = window.open(url, "_blank", "noopener,noreferrer");
-
-  if (nextWindow) {
-    nextWindow.focus();
-    return;
-  }
-
+  const w = window.open(url, "_blank", "noopener,noreferrer");
+  if (w) { w.focus(); return; }
   window.location.assign(url);
+}
+
+/* ── Collapsible section for mobile ── */
+function Section({
+  title,
+  badge,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  badge?: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-black/8">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-black/[0.02]"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-charcoal">
+            {title}
+          </span>
+          {badge && (
+            <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#1a1000]">
+              {badge}
+            </span>
+          )}
+        </div>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-black/30 transition-transform duration-200",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      {open && <div className="border-t border-black/6 px-4 pb-4 pt-3">{children}</div>}
+    </div>
+  );
 }
 
 export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const [submitted, setSubmitted] = useState(false);
-  const [submissionError, setSubmissionError] = useState("");
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
+
   const lineFromQuery = prefill?.line ?? "";
   const groupFromQuery = prefill?.group ?? "";
   const itemFromQuery = prefill?.item ?? "";
@@ -75,6 +111,8 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
       phone: "",
       company: "",
       interests: [],
+      obra: "",
+      zone: "",
       message: "",
       line: "",
       group: "",
@@ -83,104 +121,63 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   });
 
   const selectedInterests = watch("interests") ?? [];
+  const selectedObra = watch("obra") ?? "";
+  const nameVal = watch("name");
+  const emailVal = watch("email");
+  const companyVal = watch("company");
 
   const toggleInterest = (item: string) => {
-    const updated = selectedInterests.includes(item)
-      ? selectedInterests.filter((interest) => interest !== item)
+    const next = selectedInterests.includes(item)
+      ? selectedInterests.filter((i) => i !== item)
       : [...selectedInterests, item];
-
-    setValue("interests", updated, { shouldValidate: true });
+    setValue("interests", next, { shouldValidate: true });
   };
 
   useEffect(() => {
     setValue("line", lineFromQuery);
     setValue("group", groupFromQuery);
     setValue("item", itemFromQuery);
-
-    if (lineFromQuery) {
-      setValue("interests", [lineFromQuery], { shouldValidate: true });
-    }
-
-    if (messageFromQuery) {
-      setValue("message", messageFromQuery, { shouldValidate: true });
-    }
-  }, [
-    groupFromQuery,
-    itemFromQuery,
-    lineFromQuery,
-    messageFromQuery,
-    setValue,
-  ]);
+    if (lineFromQuery) setValue("interests", [lineFromQuery], { shouldValidate: true });
+    if (messageFromQuery) setValue("message", messageFromQuery, { shouldValidate: true });
+  }, [groupFromQuery, itemFromQuery, lineFromQuery, messageFromQuery, setValue]);
 
   const onSubmit = async (values: ContactSubmission) => {
-    setSubmissionError("");
-    const fallbackWhatsappUrl = buildWhatsappUrl(values);
-    const pendingWhatsappWindow =
+    const fallbackUrl = buildWhatsappUrl(values);
+    const pendingWindow =
       typeof window !== "undefined"
         ? window.open("", "_blank", "noopener,noreferrer")
         : null;
 
     try {
-      const response = await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
-      const data = (await response.json()) as {
+      const data = (await res.json()) as {
         ok?: boolean;
-        error?: string;
         whatsappUrl?: string;
         emailStatus?: "sent" | "pending_config" | "failed";
       };
-
-      const nextResult = {
-        whatsappUrl: data.whatsappUrl ?? fallbackWhatsappUrl,
+      const result = {
+        whatsappUrl: data.whatsappUrl ?? fallbackUrl,
         emailStatus: data.emailStatus ?? "pending_config",
       } satisfies SubmitResult;
 
-      if (!response.ok || !data.ok) {
-        console.error(
-          "No pudimos guardar la consulta en la base, pero redirigimos a WhatsApp.",
-          data.error,
-        );
-      }
-
-      if (typeof window !== "undefined") {
-        openWhatsAppInNewTab(
-          nextResult.whatsappUrl,
-          pendingWhatsappWindow,
-        );
-        return;
-      }
-
-      setSubmitResult(nextResult);
+      openWhatsAppInNewTab(result.whatsappUrl, pendingWindow);
+      setSubmitResult(result);
       setSubmitted(true);
       reset({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
+        name: "", email: "", phone: "", company: "",
         interests: lineFromQuery ? [lineFromQuery] : [],
+        obra: "", zone: "",
         message: messageFromQuery,
-        line: lineFromQuery,
-        group: groupFromQuery,
-        item: itemFromQuery,
+        line: lineFromQuery, group: groupFromQuery, item: itemFromQuery,
       });
-    } catch (error) {
-      console.error(
-        "Fallo el envio al backend, pero redirigimos igual a WhatsApp.",
-        error,
-      );
-
-      if (typeof window !== "undefined") {
-        openWhatsAppInNewTab(
-          fallbackWhatsappUrl,
-          pendingWhatsappWindow,
-        );
-      }
+    } catch {
+      openWhatsAppInNewTab(fallbackUrl, pendingWindow);
+      setSubmitResult({ whatsappUrl: fallbackUrl, emailStatus: "failed" });
+      setSubmitted(true);
     }
   };
 
@@ -188,50 +185,38 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
     return (
       <div
         id="contacto"
-        className="mx-auto flex min-h-[360px] max-w-2xl items-center justify-center rounded-[24px] border border-black/8 bg-white p-10 text-center shadow-[0_16px_48px_rgba(0,0,0,0.06)]"
+        className="mx-auto flex min-h-[240px] max-w-2xl items-center justify-center rounded-[18px] border border-black/8 bg-white p-8 text-center shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
       >
         <div>
           <div
-            className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full"
-            style={{
-              background: "rgba(255,210,57,0.14)",
-              border: "1px solid rgba(255,210,57,0.28)",
-            }}
+            className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full"
+            style={{ background: "rgba(255,210,57,0.14)", border: "1px solid rgba(255,210,57,0.28)" }}
           >
-            <CheckCircle2 className="h-6 w-6 text-brand-charcoal" />
+            <CheckCircle2 className="h-5 w-5 text-brand-charcoal" />
           </div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-black/34">
-            Consulta recibida
+            Consulta enviada
           </p>
-          <h3 className="mt-2 font-display text-[clamp(1.8rem,3.5vw,3rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
-            La consulta ya se
-            <span className="block text-brand-yellow">guardo correctamente.</span>
+          <h3 className="mt-1.5 font-display text-[clamp(1.4rem,3vw,2.4rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
+            Te respondemos
+            <span className="block text-brand-yellow">en menos de 24 hs.</span>
           </h3>
-          <p className="mt-3 text-sm leading-7 text-black/46">
-            El mensaje se registro en la base comercial y ya esta listo para
-            seguimiento.
-          </p>
-
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            {submitResult?.whatsappUrl ? (
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            {submitResult?.whatsappUrl && (
               <a
                 href={submitResult.whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#1a1000] transition hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1a1000] transition hover:-translate-y-0.5"
               >
-                Abrir WhatsApp
-                <ArrowRight className="h-4 w-4" />
+                Abrir WhatsApp <ArrowRight className="h-3.5 w-3.5" />
               </a>
-            ) : null}
+            )}
             <button
-              onClick={() => {
-                setSubmitted(false);
-                setSubmitResult(null);
-              }}
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-charcoal transition hover:border-brand-yellow"
+              onClick={() => { setSubmitted(false); setSubmitResult(null); }}
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-charcoal transition hover:border-brand-yellow"
             >
-              Nueva consulta <ArrowRight className="h-4 w-4" />
+              Nueva consulta
             </button>
           </div>
         </div>
@@ -241,55 +226,54 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
 
   return (
     <div id="contacto" className="mx-auto w-full max-w-2xl">
-      <div className="overflow-hidden rounded-[24px] border border-black/8 bg-white shadow-[0_16px_52px_rgba(0,0,0,0.07)]">
+      <div className="overflow-hidden rounded-[18px] border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
         <div className="h-[3px] bg-brand-yellow" />
-        <div className="p-6 sm:p-8">
-          {(lineFromQuery || requestedFromQuery) && (
-            <div className="mb-6 rounded-[14px] border border-[#e8d06a]/50 bg-[rgba(255,247,210,0.5)] px-4 py-3.5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/36">
-                Consulta preseleccionada
-              </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {lineFromQuery && (
-                  <span className="rounded-full bg-[#2d2d2d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
-                    {lineFromQuery}
-                  </span>
-                )}
-                {requestedFromQuery && (
-                  <span className="rounded-full border border-black/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/50">
-                    {requestedFromQuery}
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <input type="hidden" {...register("line")} />
-            <input type="hidden" {...register("group")} />
-            <input type="hidden" {...register("item")} />
-
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-black/34">
-                Linea de interes
-                <span className="ml-2 font-normal normal-case text-black/28">
-                  (podes seleccionar varias)
+        {(lineFromQuery || requestedFromQuery) && (
+          <div className="border-b border-black/6 bg-[rgba(255,247,210,0.6)] px-4 py-2.5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.24em] text-black/40">
+              Consulta preseleccionada
+            </p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {lineFromQuery && (
+                <span className="rounded-full bg-[#2d2d2d] px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-white">
+                  {lineFromQuery}
                 </span>
-              </p>
+              )}
+              {requestedFromQuery && (
+                <span className="rounded-full border border-black/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                  {requestedFromQuery}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input type="hidden" {...register("line")} />
+          <input type="hidden" {...register("group")} />
+          <input type="hidden" {...register("item")} />
+
+          <div className="divide-y divide-black/6">
+            {/* Linea de interes */}
+            <Section
+              title="Linea de interes"
+              badge={selectedInterests.length > 0 ? String(selectedInterests.length) : undefined}
+              defaultOpen
+            >
               <div className="flex flex-wrap gap-2">
                 {contactInterestOptions.map((item) => {
                   const active = selectedInterests.includes(item);
-
                   return (
                     <button
                       key={item}
                       type="button"
                       onClick={() => toggleInterest(item)}
                       className={cn(
-                        "rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-150",
+                        "rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-150",
                         active
-                          ? "border-[#ffd239] bg-[#ffd239] text-[#1a1000] shadow-[0_4px_12px_rgba(255,210,57,0.3)]"
-                          : "border-black/10 bg-white text-black/46 hover:border-black/18 hover:bg-[#fafaf7] hover:text-brand-charcoal",
+                          ? "border-[#ffd239] bg-[#ffd239] text-[#1a1000] shadow-[0_2px_8px_rgba(255,210,57,0.26)]"
+                          : "border-black/10 bg-white text-black/44 hover:border-black/18 hover:text-brand-charcoal",
                       )}
                     >
                       {item}
@@ -298,132 +282,112 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                 })}
               </div>
               {errors.interests && (
-                <p className="text-[11px] text-red-500">
-                  {errors.interests.message}
-                </p>
+                <p className="mt-2 text-[11px] text-red-500">{errors.interests.message}</p>
               )}
-            </div>
+            </Section>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label
-                  htmlFor="name"
-                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
-                >
-                  Nombre
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  className={inputClassName}
-                  placeholder="Tu nombre"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-[11px] text-red-500">
-                    {errors.name.message}
-                  </p>
-                )}
+            {/* Tipo de obra */}
+            <Section
+              title="Tipo de obra"
+              badge={selectedObra ? "1" : undefined}
+            >
+              <div className="flex flex-wrap gap-2">
+                {contactObraOptions.map((obra) => {
+                  const active = selectedObra === obra;
+                  return (
+                    <button
+                      key={obra}
+                      type="button"
+                      onClick={() => setValue("obra", active ? "" : obra)}
+                      className={cn(
+                        "rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.06em] transition-all duration-150",
+                        active
+                          ? "border-brand-charcoal bg-brand-charcoal text-white"
+                          : "border-black/10 bg-white text-black/44 hover:border-black/20 hover:text-brand-charcoal",
+                      )}
+                    >
+                      {obra}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  className={inputClassName}
-                  placeholder="tuemail@empresa.com"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-[11px] text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="company"
-                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
-                >
-                  Empresa o rubro
-                </label>
-                <input
-                  id="company"
-                  type="text"
-                  className={inputClassName}
-                  placeholder="Empresa, estudio o rubro"
-                  {...register("company")}
-                />
-                {errors.company && (
-                  <p className="text-[11px] text-red-500">
-                    {errors.company.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="phone"
-                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
-                >
-                  Telefono
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  className={inputClassName}
-                  placeholder="+54 9 ..."
-                  {...register("phone")}
-                />
-              </div>
-            </div>
+            </Section>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="message"
-                className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
-              >
-                Contanos tu proyecto
-              </label>
-              <textarea
-                id="message"
-                rows={5}
-                className={cn(inputClassName, "resize-none")}
-                placeholder="Tipo de obra, volumen estimado, zona de entrega..."
-                {...register("message")}
-              />
-              {errors.message && (
-                <p className="text-[11px] text-red-500">
-                  {errors.message.message}
-                </p>
-              )}
-            </div>
-
-            {submissionError && (
-              <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                <div className="flex items-start gap-2">
-                  <MessageCircleWarning className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                  <span>{submissionError}</span>
+            {/* Datos de contacto */}
+            <Section
+              title="Tus datos"
+              badge={nameVal && emailVal && companyVal ? "✓" : undefined}
+              defaultOpen
+            >
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className={labelCls}>Nombre *</label>
+                  <input id="name" type="text" className={inputCls} placeholder="Tu nombre" {...register("name")} />
+                  {errors.name && <p className="mt-1 text-[10px] text-red-500">{errors.name.message}</p>}
+                </div>
+                <div>
+                  <label htmlFor="email" className={labelCls}>Email *</label>
+                  <input id="email" type="email" className={inputCls} placeholder="tuemail@empresa.com" {...register("email")} />
+                  {errors.email && <p className="mt-1 text-[10px] text-red-500">{errors.email.message}</p>}
+                </div>
+                <div>
+                  <label htmlFor="company" className={labelCls}>Empresa o rubro *</label>
+                  <input id="company" type="text" className={inputCls} placeholder="Constructora, municipio..." {...register("company")} />
+                  {errors.company && <p className="mt-1 text-[10px] text-red-500">{errors.company.message}</p>}
+                </div>
+                <div>
+                  <label htmlFor="phone" className={labelCls}>Telefono</label>
+                  <input id="phone" type="tel" className={inputCls} placeholder="+54 9 299 ..." {...register("phone")} />
                 </div>
               </div>
-            )}
+            </Section>
 
-            <div className="flex justify-end pt-1">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-8 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] shadow-[0_8px_22px_rgba(255,210,57,0.26)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
-              >
-                {isSubmitting ? "Enviando..." : "Enviar consulta"}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </form>
-        </div>
+            {/* Zona + Mensaje */}
+            <Section title="Tu proyecto">
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="zone" className={labelCls}>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      Zona de entrega
+                    </span>
+                  </label>
+                  <input
+                    id="zone"
+                    type="text"
+                    className={inputCls}
+                    placeholder="Neuquen, Zapala, Cutral Co..."
+                    {...register("zone")}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className={labelCls}>Contanos tu proyecto *</label>
+                  <textarea
+                    id="message"
+                    rows={3}
+                    className={cn(inputCls, "resize-none")}
+                    placeholder="Tipo de obra, volumen estimado, fecha de inicio..."
+                    {...register("message")}
+                  />
+                  {errors.message && <p className="mt-1 text-[10px] text-red-500">{errors.message.message}</p>}
+                </div>
+              </div>
+            </Section>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-between px-4 py-3">
+            <p className="text-[10px] text-black/28">* Requeridos</p>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1a1000] shadow-[0_4px_16px_rgba(255,210,57,0.26)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
+            >
+              {isSubmitting ? "Enviando..." : "Enviar consulta"}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
