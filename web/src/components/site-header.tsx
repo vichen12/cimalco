@@ -356,7 +356,7 @@ export function SiteHeader() {
                         <Dialog.Close asChild>
                           <a
                             href="/contacto"
-                            className="mt-3 inline-flex rounded-full bg-[#1a1000] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white"
+                            className="mt-3 inline-flex rounded-full bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-brand-charcoal shadow-[0_8px_18px_rgba(0,0,0,0.10)] transition hover:bg-[#fffdf0]"
                           >
                             {"Ir a contacto ->"}
                           </a>

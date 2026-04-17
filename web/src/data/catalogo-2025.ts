@@ -41,7 +41,8 @@ export type CamaraTipica = {
   peso: string;
 };
 
-export const catalogDownloadHref = "/catalogo-2025/catalogo-cimalco-2025.pdf";
+export const catalogDownloadHref =
+  "/Cat%C3%A1logo%20Cimalco%202025%20(1)%20(2).pdf";
 
 export const catalogSections = [
   {
