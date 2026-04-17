@@ -260,6 +260,7 @@ export function SiteHeader() {
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
                 <Dialog.Content className="fixed inset-x-3 top-3 z-50 rounded-[24px] border border-black/8 bg-white shadow-[0_24px_60px_rgba(0,0,0,0.16)] sm:left-auto sm:right-5 sm:top-4 sm:w-[320px]">
+                  <Dialog.Title className="sr-only">Menu de navegacion</Dialog.Title>
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="relative h-7 w-[130px]">
