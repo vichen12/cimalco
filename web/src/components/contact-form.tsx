@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as Select from "@radix-ui/react-select";
-import { ArrowRight, CheckCircle2, ChevronDown, Check, MapPin } from "lucide-react";
+import {
+  ArrowRight, Building2, Check, CheckCircle2,
+  ChevronDown, Mail, MapPin, MessageSquare, Phone, User, X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   buildWhatsappUrl,
@@ -15,258 +17,277 @@ import {
   type ContactSubmission,
 } from "@/lib/contact";
 
-/* ── shared styles ── */
-const inputCls =
-  "w-full rounded-[10px] border border-black/10 bg-[#fafaf7] px-3 py-2 text-[13px] text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#ffd239]/12";
-
-const labelCls =
-  "block text-[9px] font-bold uppercase tracking-[0.2em] text-black/36 mb-1";
-
-/* ── custom select ── */
-type StyledSelectProps = {
-  placeholder: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: readonly string[];
-  accentColor?: "yellow" | "charcoal";
-  error?: boolean;
-};
-
-function StyledSelect({
-  placeholder,
-  value,
-  onChange,
-  options,
-  accentColor = "yellow",
-  error,
-}: StyledSelectProps) {
-  const accent =
-    accentColor === "yellow"
-      ? { border: "#ffd239", bg: "rgba(255,210,57,0.08)", check: "#1a1000" }
-      : { border: "#2d2d2d", bg: "rgba(45,45,45,0.06)", check: "#2d2d2d" };
-
+/* ─── section header ─── */
+function SectionHeader({ num, label }: { num: string; label: string }) {
   return (
-    <Select.Root value={value} onValueChange={onChange}>
-      <Select.Trigger
-        className={cn(
-          "flex w-full items-center justify-between rounded-[10px] border bg-[#fafaf7] px-3 py-2 text-[13px] transition-all outline-none",
-          "data-[state=open]:ring-2 data-[state=open]:ring-[#ffd239]/20 data-[state=open]:border-[#ffd239]",
-          error
-            ? "border-red-300"
-            : value
-            ? "border-[#ffd239]/60 bg-white font-medium text-[#2d2d2d]"
-            : "border-black/10 text-black/32 hover:border-black/20 hover:text-black/48",
-        )}
-      >
-        <Select.Value placeholder={placeholder} />
-        <Select.Icon asChild>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-black/30" />
-        </Select.Icon>
-      </Select.Trigger>
-
-      <Select.Portal>
-        <Select.Content
-          position="popper"
-          sideOffset={4}
-          className="z-50 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-[14px] border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.14)]"
-        >
-          <Select.Viewport className="p-1.5">
-            {options.map((opt) => (
-              <Select.Item
-                key={opt}
-                value={opt}
-                className="group flex cursor-pointer select-none items-center justify-between gap-2 rounded-[9px] px-3 py-2 text-[12px] text-black/60 outline-none transition hover:bg-[#fafaf7] hover:text-brand-charcoal data-[state=checked]:bg-[rgba(255,210,57,0.10)] data-[state=checked]:font-semibold data-[state=checked]:text-brand-charcoal"
-              >
-                <Select.ItemText>{opt}</Select.ItemText>
-                <Select.ItemIndicator>
-                  <Check className="h-3 w-3 text-brand-charcoal" />
-                </Select.ItemIndicator>
-              </Select.Item>
-            ))}
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+    <div className="flex items-center gap-3 mb-4">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-[8px] font-black text-[#1a1000]">
+        {num}
+      </span>
+      <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
+        {label}
+      </span>
+      <div className="h-px flex-1 bg-black/[0.06]" />
+    </div>
   );
 }
 
-/* ── helpers ── */
-type ContactFormPrefill = {
-  line?: string;
-  group?: string;
-  item?: string;
-  message?: string;
+/* ─── pill input ─── */
+type PillInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  icon: React.ElementType;
+  error?: boolean;
 };
+function PillInput({ icon: Icon, error, className, ...props }: PillInputProps) {
+  return (
+    <div className="relative">
+      <Icon className="pointer-events-none absolute left-4 top-1/2 h-[14px] w-[14px] -translate-y-1/2 text-black/22" />
+      <input
+        {...props}
+        className={cn(
+          "w-full rounded-full border bg-[#fafaf7] py-2.5 pl-9 pr-4 text-[13px] text-brand-charcoal outline-none transition-all",
+          "placeholder:text-black/26 focus:bg-white focus:ring-2 focus:ring-[#ffd239]/16",
+          error
+            ? "border-red-300 focus:border-red-400"
+            : "border-black/[0.09] focus:border-[#ffd239]/60 hover:border-black/16",
+          className,
+        )}
+      />
+    </div>
+  );
+}
 
-type SubmitResult = {
-  whatsappUrl: string;
-  emailStatus: "sent" | "pending_config" | "failed";
+/* ─── pill textarea ─── */
+type PillTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  icon: React.ElementType;
+  error?: boolean;
 };
+function PillTextarea({ icon: Icon, error, className, ...props }: PillTextareaProps) {
+  return (
+    <div className="relative">
+      <Icon className="pointer-events-none absolute left-4 top-[14px] h-[14px] w-[14px] text-black/22" />
+      <textarea
+        {...props}
+        className={cn(
+          "w-full resize-none rounded-[18px] border bg-[#fafaf7] py-2.5 pl-9 pr-4 text-[13px] text-brand-charcoal outline-none transition-all",
+          "placeholder:text-black/26 focus:bg-white focus:ring-2 focus:ring-[#ffd239]/16",
+          error
+            ? "border-red-300 focus:border-red-400"
+            : "border-black/[0.09] focus:border-[#ffd239]/60 hover:border-black/16",
+          className,
+        )}
+      />
+    </div>
+  );
+}
 
-function openWhatsAppInNewTab(url: string, pendingWindow?: Window | null) {
+/* ─── multi-select ─── */
+type MultiSelectProps = {
+  placeholder: string;
+  value: string[];
+  onChange: (v: string[]) => void;
+  options: readonly string[];
+  icon?: React.ElementType;
+  error?: boolean;
+};
+function MultiSelect({ placeholder, value, onChange, options, icon: Icon, error }: MultiSelectProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOut(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleOut);
+    return () => document.removeEventListener("mousedown", handleOut);
+  }, []);
+
+  const toggle = (opt: string) =>
+    onChange(value.includes(opt) ? value.filter((v) => v !== opt) : [...value, opt]);
+
+  const triggerLabel =
+    value.length === 0
+      ? placeholder
+      : value.length === 1
+      ? value[0]
+      : `${value[0]} +${value.length - 1}`;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "flex w-full items-center gap-2 rounded-full border bg-[#fafaf7] py-2.5 pl-4 pr-3 text-[13px] outline-none transition-all text-left",
+          open && "ring-2 ring-[#ffd239]/16 border-[#ffd239]/60 bg-white",
+          error
+            ? "border-red-300"
+            : value.length > 0
+            ? !open && "border-[#ffd239]/60 bg-white font-medium text-brand-charcoal"
+            : "border-black/[0.09] text-black/28 hover:border-black/16",
+        )}
+      >
+        {Icon && <Icon className="h-[14px] w-[14px] shrink-0 text-black/22" />}
+        <span className={cn("flex-1 truncate", value.length === 0 && "text-black/28")}>
+          {triggerLabel}
+        </span>
+        <ChevronDown
+          className={cn("h-3.5 w-3.5 shrink-0 text-black/22 transition-transform", open && "rotate-180")}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-[16px] border border-black/[0.08] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+          <div className="max-h-[220px] overflow-y-auto p-1.5">
+            {options.map((opt) => {
+              const selected = value.includes(opt);
+              return (
+                <button
+                  type="button"
+                  key={opt}
+                  onClick={() => toggle(opt)}
+                  className="flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-[12px] text-left outline-none transition hover:bg-[#fafaf7]"
+                >
+                  <span
+                    className={cn(
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition",
+                      selected
+                        ? "border-brand-yellow bg-brand-yellow"
+                        : "border-black/18 bg-transparent",
+                    )}
+                  >
+                    {selected && <Check className="h-2.5 w-2.5 text-[#1a1000]" />}
+                  </span>
+                  <span
+                    className={cn(
+                      "transition",
+                      selected ? "font-semibold text-brand-charcoal" : "text-black/54",
+                    )}
+                  >
+                    {opt}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── helpers ─── */
+type ContactFormPrefill = { line?: string; group?: string; item?: string; message?: string };
+type SubmitResult = { whatsappUrl: string; emailStatus: "sent" | "pending_config" | "failed" };
+
+function openWA(url: string, win?: Window | null) {
   if (typeof window === "undefined") return;
-  if (pendingWindow && !pendingWindow.closed) {
-    pendingWindow.location.href = url;
-    pendingWindow.focus();
-    return;
-  }
+  if (win && !win.closed) { win.location.href = url; win.focus(); return; }
   const w = window.open(url, "_blank", "noopener,noreferrer");
   if (w) { w.focus(); return; }
   window.location.assign(url);
 }
 
-/* ── form ── */
+/* ─── main component ─── */
 export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
+  const [obrasSelected, setObrasSelected] = useState<string[]>([]);
 
-  const lineFromQuery = prefill?.line ?? "";
-  const groupFromQuery = prefill?.group ?? "";
-  const itemFromQuery = prefill?.item ?? "";
-  const messageFromQuery = prefill?.message ?? "";
+  const lineFromQuery  = prefill?.line    ?? "";
+  const groupFromQuery = prefill?.group   ?? "";
+  const itemFromQuery  = prefill?.item    ?? "";
+  const msgFromQuery   = prefill?.message ?? "";
   const requestedFromQuery = itemFromQuery || groupFromQuery;
 
-  const {
-    register,
-    setValue,
-    watch,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<ContactSubmissionInput, unknown, ContactSubmission>({
-    resolver: zodResolver(contactSubmissionSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      interests: [],
-      obra: "",
-      zone: "",
-      message: "",
-      line: "",
-      group: "",
-      item: "",
-    },
-  });
+  const { register, setValue, watch, handleSubmit, formState: { errors, isSubmitting }, reset } =
+    useForm<ContactSubmissionInput, unknown, ContactSubmission>({
+      resolver: zodResolver(contactSubmissionSchema),
+      defaultValues: { name: "", email: "", phone: "", company: "", interests: [], obra: "", zone: "", message: "", line: "", group: "", item: "" },
+    });
 
   const interests = watch("interests") ?? [];
-  const selectedInterest = interests[0] ?? "";
-  const selectedObra = watch("obra") ?? "";
 
   useEffect(() => {
     setValue("line", lineFromQuery);
     setValue("group", groupFromQuery);
     setValue("item", itemFromQuery);
     if (lineFromQuery) setValue("interests", [lineFromQuery], { shouldValidate: true });
-    if (messageFromQuery) setValue("message", messageFromQuery, { shouldValidate: true });
-  }, [groupFromQuery, itemFromQuery, lineFromQuery, messageFromQuery, setValue]);
+    if (msgFromQuery)  setValue("message", msgFromQuery, { shouldValidate: true });
+  }, [groupFromQuery, itemFromQuery, lineFromQuery, msgFromQuery, setValue]);
+
+  useEffect(() => {
+    setValue("obra", obrasSelected.join(", "));
+  }, [obrasSelected, setValue]);
 
   const onSubmit = async (values: ContactSubmission) => {
-    const fallbackUrl = buildWhatsappUrl(values);
-    const pendingWindow =
-      typeof window !== "undefined"
-        ? window.open("", "_blank", "noopener,noreferrer")
-        : null;
-
+    const fallback = buildWhatsappUrl(values);
+    const win = typeof window !== "undefined" ? window.open("", "_blank", "noopener,noreferrer") : null;
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const data = (await res.json()) as {
-        ok?: boolean;
-        whatsappUrl?: string;
-        emailStatus?: "sent" | "pending_config" | "failed";
-      };
-      const result = {
-        whatsappUrl: data.whatsappUrl ?? fallbackUrl,
-        emailStatus: data.emailStatus ?? "pending_config",
-      } satisfies SubmitResult;
-
-      openWhatsAppInNewTab(result.whatsappUrl, pendingWindow);
+      const res  = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
+      const data = await res.json() as { ok?: boolean; whatsappUrl?: string; emailStatus?: "sent" | "pending_config" | "failed" };
+      const result = { whatsappUrl: data.whatsappUrl ?? fallback, emailStatus: data.emailStatus ?? "pending_config" } satisfies SubmitResult;
+      openWA(result.whatsappUrl, win);
       setSubmitResult(result);
-      setSubmitted(true);
-      reset({
-        name: "", email: "", phone: "", company: "",
-        interests: lineFromQuery ? [lineFromQuery] : [],
-        obra: "", zone: "",
-        message: messageFromQuery,
-        line: lineFromQuery, group: groupFromQuery, item: itemFromQuery,
-      });
     } catch {
-      openWhatsAppInNewTab(fallbackUrl, pendingWindow);
-      setSubmitResult({ whatsappUrl: fallbackUrl, emailStatus: "failed" });
-      setSubmitted(true);
+      openWA(fallback, win);
+      setSubmitResult({ whatsappUrl: fallback, emailStatus: "failed" });
     }
+    setSubmitted(true);
+    setObrasSelected([]);
+    reset({
+      name: "", email: "", phone: "", company: "",
+      interests: lineFromQuery ? [lineFromQuery] : [],
+      obra: "", zone: "", message: msgFromQuery,
+      line: lineFromQuery, group: groupFromQuery, item: itemFromQuery,
+    });
   };
 
-  /* ── success state ── */
-  if (submitted) {
-    return (
-      <div
-        id="contacto"
-        className="mx-auto flex min-h-[220px] max-w-2xl items-center justify-center rounded-[18px] border border-black/8 bg-white p-8 text-center shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
-      >
-        <div>
-          <div
-            className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full"
-            style={{ background: "rgba(255,210,57,0.14)", border: "1px solid rgba(255,210,57,0.28)" }}
-          >
-            <CheckCircle2 className="h-5 w-5 text-brand-charcoal" />
-          </div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/34">
-            Consulta enviada
-          </p>
-          <h3 className="mt-1.5 font-display text-[clamp(1.4rem,3vw,2.2rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
-            Te respondemos
-            <span className="block text-brand-yellow">en menos de 24 hs.</span>
-          </h3>
-          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
-            {submitResult?.whatsappUrl && (
-              <a
-                href={submitResult.whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1a1000] transition hover:-translate-y-0.5"
-              >
-                Abrir WhatsApp <ArrowRight className="h-3.5 w-3.5" />
-              </a>
-            )}
-            <button
-              onClick={() => { setSubmitted(false); setSubmitResult(null); }}
-              className="inline-flex rounded-full border border-black/10 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-charcoal transition hover:border-brand-yellow"
-            >
-              Nueva consulta
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  /* ── form ── */
   return (
     <div id="contacto" className="mx-auto w-full max-w-2xl">
-      <div className="overflow-hidden rounded-[18px] border border-black/8 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
-        {/* top accent */}
+      <div className="overflow-hidden rounded-[24px] border border-black/[0.07] bg-white shadow-[0_8px_40px_rgba(0,0,0,0.07)]">
         <div className="h-[3px] bg-brand-yellow" />
 
-        {/* prefill badge */}
+        {/* ── inline success banner ── */}
+        {submitted && (
+          <div className="flex items-start gap-3 border-b border-[#ffd239]/20 bg-[rgba(255,210,57,0.07)] px-5 py-4">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-charcoal" />
+            <div className="flex-1">
+              <p className="text-[12px] font-semibold text-brand-charcoal">
+                Consulta enviada — te respondemos en menos de 24 hs.
+              </p>
+              {submitResult?.whatsappUrl && (
+                <a
+                  href={submitResult.whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-brand-charcoal underline underline-offset-2 transition hover:opacity-70"
+                >
+                  Abrir WhatsApp de nuevo <ArrowRight className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSubmitted(false); setSubmitResult(null); }}
+              className="mt-0.5 text-black/30 transition hover:text-brand-charcoal"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        {/* ── prefill badge ── */}
         {(lineFromQuery || requestedFromQuery) && (
-          <div className="border-b border-black/6 bg-[rgba(255,247,210,0.6)] px-4 py-2">
-            <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-black/38">
-              Consulta preseleccionada
-            </p>
+          <div className="border-b border-black/[0.05] bg-[rgba(255,247,210,0.5)] px-5 py-2.5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-black/36">Consulta preseleccionada</p>
             <div className="mt-1 flex flex-wrap gap-1.5">
               {lineFromQuery && (
-                <span className="rounded-full bg-[#2d2d2d] px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                <span className="rounded-full bg-brand-charcoal px-3 py-0.5 text-[10px] font-semibold text-white">
                   {lineFromQuery}
                 </span>
               )}
               {requestedFromQuery && (
-                <span className="rounded-full border border-black/10 px-2.5 py-0.5 text-[10px] font-semibold text-black/48">
+                <span className="rounded-full border border-black/10 px-3 py-0.5 text-[10px] font-semibold text-black/44">
                   {requestedFromQuery}
                 </span>
               )}
@@ -274,150 +295,93 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-7 px-5 py-6 sm:px-7">
           <input type="hidden" {...register("line")} />
           <input type="hidden" {...register("group")} />
           <input type="hidden" {...register("item")} />
 
-          <div className="space-y-0 divide-y divide-black/[0.05]">
+          {/* ── 01 consulta ── */}
+          <section>
+            <SectionHeader num="01" label="Consulta" />
+            <div className="space-y-2.5">
+              <MultiSelect
+                placeholder="Linea de interes *"
+                value={interests}
+                onChange={(v) => setValue("interests", v, { shouldValidate: true })}
+                options={contactInterestOptions}
+                error={!!errors.interests}
+              />
+              {errors.interests && (
+                <p className="pl-4 text-[10px] text-red-500">{errors.interests.message}</p>
+              )}
+              <MultiSelect
+                placeholder="Tipo de obra"
+                value={obrasSelected}
+                onChange={setObrasSelected}
+                options={contactObraOptions}
+              />
+            </div>
+          </section>
 
-            {/* ── Selects row ── */}
-            <div className="grid grid-cols-2 gap-3 px-4 py-4">
+          {/* ── 02 datos ── */}
+          <section>
+            <SectionHeader num="02" label="Tus datos" />
+            <div className="space-y-2.5">
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <PillInput icon={User} placeholder="Tu nombre *" error={!!errors.name} {...register("name")} />
+                  {errors.name && (
+                    <p className="mt-0.5 pl-4 text-[10px] text-red-500">{errors.name.message}</p>
+                  )}
+                </div>
+                <PillInput icon={Phone} placeholder="Telefono" type="tel" {...register("phone")} />
+              </div>
               <div>
-                <label className={labelCls}>Linea de interes *</label>
-                <StyledSelect
-                  placeholder="Seleccione una"
-                  value={selectedInterest}
-                  onChange={(v) => setValue("interests", [v], { shouldValidate: true })}
-                  options={contactInterestOptions}
-                  accentColor="yellow"
-                  error={!!errors.interests}
-                />
-                {errors.interests && (
-                  <p className="mt-0.5 text-[10px] text-red-500">{errors.interests.message}</p>
+                <PillInput icon={Mail} placeholder="Email *" type="email" error={!!errors.email} {...register("email")} />
+                {errors.email && (
+                  <p className="mt-0.5 pl-4 text-[10px] text-red-500">{errors.email.message}</p>
                 )}
               </div>
               <div>
-                <label className={labelCls}>Tipo de obra</label>
-                <StyledSelect
-                  placeholder="Seleccione uno"
-                  value={selectedObra}
-                  onChange={(v) => setValue("obra", v)}
-                  options={contactObraOptions}
-                  accentColor="charcoal"
+                <PillInput icon={Building2} placeholder="Empresa o rubro *" error={!!errors.company} {...register("company")} />
+                {errors.company && (
+                  <p className="mt-0.5 pl-4 text-[10px] text-red-500">{errors.company.message}</p>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* ── 03 proyecto ── */}
+          <section>
+            <SectionHeader num="03" label="Tu proyecto" />
+            <div className="space-y-2.5">
+              <PillInput icon={MapPin} placeholder="Zona de entrega (Neuquen, Zapala...)" {...register("zone")} />
+              <div>
+                <PillTextarea
+                  icon={MessageSquare}
+                  placeholder="Contanos el tipo de obra, volumen estimado, fecha de inicio..."
+                  rows={3}
+                  error={!!errors.message}
+                  {...register("message")}
                 />
+                {errors.message && (
+                  <p className="mt-0.5 pl-4 text-[10px] text-red-500">{errors.message.message}</p>
+                )}
               </div>
             </div>
+          </section>
 
-            {/* ── Datos ── */}
-            <div className="px-4 py-4">
-              <p className="mb-2.5 text-[9px] font-bold uppercase tracking-[0.24em] text-black/30">
-                Datos de contacto
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label htmlFor="name" className={labelCls}>Nombre *</label>
-                  <input
-                    id="name"
-                    type="text"
-                    className={inputCls}
-                    placeholder="Tu nombre"
-                    {...register("name")}
-                  />
-                  {errors.name && (
-                    <p className="mt-0.5 text-[10px] text-red-500">{errors.name.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="phone" className={labelCls}>Telefono</label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    className={inputCls}
-                    placeholder="+54 9 ..."
-                    {...register("phone")}
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label htmlFor="email" className={labelCls}>Email *</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className={inputCls}
-                    placeholder="tuemail@empresa.com"
-                    {...register("email")}
-                  />
-                  {errors.email && (
-                    <p className="mt-0.5 text-[10px] text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
-                <div className="col-span-2">
-                  <label htmlFor="company" className={labelCls}>Empresa o rubro *</label>
-                  <input
-                    id="company"
-                    type="text"
-                    className={inputCls}
-                    placeholder="Constructora, municipio, estudio..."
-                    {...register("company")}
-                  />
-                  {errors.company && (
-                    <p className="mt-0.5 text-[10px] text-red-500">{errors.company.message}</p>
-                  )}
-                </div>
-              </div>
-            </div>
+          {/* ── submit ── */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-yellow py-3.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] shadow-[0_4px_20px_rgba(255,210,57,0.30)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
+          >
+            {isSubmitting ? "Enviando..." : "Enviar consulta"}
+            <ArrowRight className="h-4 w-4" />
+          </button>
 
-            {/* ── Proyecto ── */}
-            <div className="px-4 py-4">
-              <p className="mb-2.5 text-[9px] font-bold uppercase tracking-[0.24em] text-black/30">
-                Tu proyecto
-              </p>
-              <div className="space-y-2">
-                <div>
-                  <label htmlFor="zone" className={labelCls}>
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-2.5 w-2.5" />
-                      Zona de entrega
-                    </span>
-                  </label>
-                  <input
-                    id="zone"
-                    type="text"
-                    className={inputCls}
-                    placeholder="Neuquen, Zapala, Cutral Co..."
-                    {...register("zone")}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className={labelCls}>Mensaje *</label>
-                  <textarea
-                    id="message"
-                    rows={3}
-                    className={cn(inputCls, "resize-none")}
-                    placeholder="Contanos el tipo de obra, volumen estimado, fecha de inicio..."
-                    {...register("message")}
-                  />
-                  {errors.message && (
-                    <p className="mt-0.5 text-[10px] text-red-500">{errors.message.message}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* ── footer ── */}
-          <div className="flex items-center justify-between border-t border-black/[0.05] px-4 py-3">
-            <p className="text-[9px] text-black/22">* Campos requeridos</p>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-full bg-brand-yellow px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#1a1000] shadow-[0_4px_14px_rgba(255,210,57,0.28)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
-            >
-              {isSubmitting ? "Enviando..." : "Enviar consulta"}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
+          <p className="text-center text-[9px] text-black/22">* Campos requeridos</p>
         </form>
       </div>
     </div>

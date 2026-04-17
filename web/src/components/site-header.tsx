@@ -242,7 +242,7 @@ export function SiteHeader() {
 
           <div className="flex items-center gap-3">
             <a
-              href="/contacto"
+              href="/contacto#contacto"
               className="hidden items-center gap-2 rounded-full bg-brand-yellow px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-[#1a1000] shadow-[0_4px_14px_rgba(255,210,57,0.32)] transition hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(255,210,57,0.4)] lg:inline-flex"
             >
               Contactanos
@@ -308,7 +308,7 @@ export function SiteHeader() {
 
                     <Dialog.Close asChild>
                       <a
-                        href="/contacto"
+                        href="/contacto#contacto"
                         className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-yellow py-3.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] shadow-[0_4px_14px_rgba(255,210,57,0.32)] transition hover:brightness-95"
                       >
                         Contactanos
