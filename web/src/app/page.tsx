@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BrandCarousel } from "@/components/brand-carousel";
 import { ExpandableColumns } from "@/components/expandable-columns";
 import { HeroSection } from "@/components/hero-section";
@@ -6,11 +7,45 @@ import { ProductRows } from "@/components/product-rows";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { VerticalSections } from "@/components/vertical-sections";
-import { WhatsAppButton } from "@/components/whatsapp-button";
+import { absoluteUrl, createPageMetadata, legalName, siteName } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Premoldeados y pretensados de hormigon en Neuquen",
+  description:
+    "Fabricacion de premoldeados y pretensados de hormigon para energia, Oil & Gas, vialidad e infraestructura en Neuquen y toda la Patagonia.",
+  path: "/",
+  image: "/site-assets/premoldeados-de-hormigon.jpg",
+  keywords: [
+    "premoldeados de hormigon",
+    "pretensados de hormigon",
+    "postes de alta tension",
+    "Oil & Gas Neuquen",
+    "infraestructura Patagonia",
+  ],
+});
 
 export default function Home() {
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: siteName,
+    url: absoluteUrl("/"),
+    description:
+      "Premoldeados y pretensados de hormigon para energia, Oil & Gas, vialidad e infraestructura en Neuquen y toda la Patagonia.",
+    inLanguage: "es-AR",
+    about: {
+      "@type": "Corporation",
+      name: legalName,
+    },
+    primaryImageOfPage: absoluteUrl("/site-assets/premoldeados-de-hormigon.jpg"),
+  };
+
   return (
     <main className="relative min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+      />
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div
           style={{
@@ -59,7 +94,6 @@ export default function Home() {
         <BrandCarousel />
         <SiteFooter />
       </div>
-      <WhatsAppButton />
     </main>
   );
 }

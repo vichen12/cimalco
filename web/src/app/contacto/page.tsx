@@ -1,61 +1,23 @@
 import type { Metadata } from "next";
-import { ArrowRight, Clock3, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { Building2, Clock3, ShieldCheck, Zap } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
-import { Button } from "@/components/ui/button";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { absoluteUrl, createPageMetadata, legalName } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contacto — Cimalco Patagonia",
+export const metadata: Metadata = createPageMetadata({
+  title: "Contacto comercial",
   description:
-    "Contactate con Cimalco Patagonia por premoldeados, postes pretensados y proyectos especiales. Neuquen, Patagonia Argentina.",
-};
-
-const contactItems = [
-  {
-    icon: Phone,
-    label: "Telefono",
-    value: "+54 299 436 1973",
-    href: "tel:+5429944361973",
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: "+54 9 2996 109261",
-    href: "https://wa.me/5492996109261",
-    color: "#25d366",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: "consultas@cimalconeuquen.com.ar",
-    href: "mailto:consultas@cimalconeuquen.com.ar",
-  },
-  {
-    icon: MapPin,
-    label: "Planta",
-    value: "ENET N 1 2089, Esq. Ing. Huergo, Parque Industrial Neuquen Oeste, 8300",
-    href: "https://maps.google.com/maps?q=Cimalco+Neuquen+S.A.",
-  },
-];
-
-const highlights = [
-  {
-    icon: Clock3,
-    label: "Respuesta comercial",
-    value: "Menos de 24 hs",
-  },
-  {
-    icon: MessageCircle,
-    label: "Canal directo",
-    value: "WhatsApp y telefono",
-  },
-  {
-    icon: MapPin,
-    label: "Cobertura",
-    value: "Patagonia norte",
-  },
-];
+    "Contactate con Cimalco Patagonia por premoldeados, postes pretensados, adoquines y proyectos especiales en Neuquen y Patagonia.",
+  path: "/contacto",
+  image: "/foto contacto.png",
+  keywords: [
+    "contacto Cimalco",
+    "consultas premoldeados",
+    "contacto adoquines Neuquen",
+    "contacto postes de hormigon",
+  ],
+});
 
 type ContactoPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -66,7 +28,55 @@ function resolveSearchParam(value: string | string[] | undefined) {
   return value ?? "";
 }
 
-export default async function ContactoPage({ searchParams }: ContactoPageProps) {
+const trustItems = [
+  {
+    icon: Clock3,
+    label: "Respuesta comercial",
+    value: "Menos de 24 hs desde la planta",
+  },
+  {
+    icon: Building2,
+    label: "Planta propia",
+    value: "Parque Industrial Neuquen Oeste",
+  },
+  {
+    icon: ShieldCheck,
+    label: "Control de calidad",
+    value: "Fabricacion con referencia IRAM",
+  },
+  {
+    icon: Zap,
+    label: "Venta directa",
+    value: "Sin intermediarios, desde fabrica",
+  },
+];
+
+const tipItems = [
+  {
+    num: "01",
+    title: "Tipo de obra",
+    body: "Vial, industrial, energetica, Oil & Gas o urbanizacion.",
+  },
+  {
+    num: "02",
+    title: "Volumen estimado",
+    body: "Aunque sea aproximado - ayuda a dimensionar la propuesta.",
+  },
+  {
+    num: "03",
+    title: "Zona de entrega",
+    body: "Trabajamos Patagonia norte con logistica propia.",
+  },
+  {
+    num: "04",
+    title: "Linea de interes",
+    body: "Bloquera, revestimientos, pretensados o premoldeados tipicos.",
+  },
+];
+
+export default async function ContactoPage({
+  searchParams,
+}: ContactoPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const prefill = {
     line: resolveSearchParam(resolvedSearchParams.line),
@@ -74,23 +84,46 @@ export default async function ContactoPage({ searchParams }: ContactoPageProps) 
     item: resolveSearchParam(resolvedSearchParams.item),
     message: resolveSearchParam(resolvedSearchParams.message),
   };
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Contacto comercial Cimalco",
+    url: absoluteUrl("/contacto"),
+    description:
+      "Canal de contacto comercial para consultas por premoldeados, pretensados y proyectos especiales en Patagonia.",
+    inLanguage: "es-AR",
+    about: {
+      "@type": "Corporation",
+      name: legalName,
+    },
+  };
 
   return (
-    <div className="relative z-10" style={{ background: "#fffdf0", minHeight: "100vh" }}>
+    <div
+      className="relative z-10"
+      style={{ background: "#fffdf0", minHeight: "100vh" }}
+    >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }}
+      />
       <SiteHeader />
 
       <section
-        className="relative overflow-hidden"
+        className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          minHeight: "calc(74vh - 64px)",
+          height: "calc(100vh - 64px)",
           borderBottom: "3px solid #ffd239",
-          backgroundImage: "url('/site-assets/premoldeados-de-hormigon.jpg')",
+          backgroundImage: "url('/foto contacto.png')",
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14)_0%,rgba(0,0,0,0.48)_42%,rgba(0,0,0,0.88)_100%)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14)_0%,rgba(0,0,0,0.50)_50%,rgba(0,0,0,0.88)_100%)]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
+        >
           <span
             className="font-display font-bold uppercase"
             style={{
@@ -98,154 +131,88 @@ export default async function ContactoPage({ searchParams }: ContactoPageProps) 
               color: "rgba(255,255,255,0.05)",
               letterSpacing: "-0.02em",
               lineHeight: 1,
-              marginBottom: "-0.08em",
-              marginRight: "-0.04em",
+              marginBottom: "-0.1em",
+              marginRight: "-0.05em",
             }}
           >
             CONTACTO
           </span>
         </div>
-
-        <div className="relative z-10 px-5 pb-14 pt-24 sm:px-8 lg:px-10 lg:pb-[4.5rem] lg:pt-28">
-          <div className="mx-auto grid w-full max-w-[1600px] gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:items-end">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/40">
-                Contacto
-              </p>
-              <h1 className="mt-3 font-display text-[clamp(2.7rem,5vw,5.4rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
-                Hablemos de
-                <span className="block text-brand-yellow">tu proyecto.</span>
-              </h1>
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-white/62 sm:text-base">
-                Te atendemos desde fabrica, con respuesta comercial directa y soporte para obras de cualquier escala.
-              </p>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button
-                  href="https://wa.me/5492996109261"
-                  target="_blank"
-                  rel="noreferrer"
-                  variant="accent"
-                  className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
-                >
-                  Escribir por WhatsApp
-                  <MessageCircle className="h-4 w-4" />
-                </Button>
-                <Button
-                  href="https://maps.google.com/maps?q=Cimalco+Neuquen+S.A."
-                  target="_blank"
-                  rel="noreferrer"
-                  variant="outline"
-                  className="gap-2 border-white/20 px-7 py-3.5 text-[11px] tracking-[0.22em] text-white/72 hover:border-white/44 hover:text-white"
-                >
-                  Ver ubicacion
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-              {highlights.map(({ icon: Icon, label, value }) => (
-                <div
-                  key={label}
-                  className="rounded-[24px] border border-white/10 bg-white/[0.05] p-5 backdrop-blur-sm"
-                >
-                  <Icon className="h-4 w-4 text-brand-yellow" />
-                  <p className="mt-4 text-[9px] font-semibold uppercase tracking-[0.22em] text-white/36">
-                    {label}
-                  </p>
-                  <p className="mt-1 text-sm text-white/84">{value}</p>
-                </div>
-              ))}
-            </div>
+        <div className="relative z-10 px-5 py-16 sm:px-8 lg:px-10 lg:py-20">
+          <div className="mx-auto w-full max-w-[1600px]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/36">
+              Contacto comercial
+            </p>
+            <h1 className="mt-2 max-w-[14ch] font-display text-[clamp(2.4rem,5vw,5rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
+              Hablemos de
+              <span className="block text-brand-yellow">tu proyecto.</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
+              Te atendemos desde fabrica. Respuesta comercial directa y soporte
+              para obras de cualquier escala en Patagonia.
+            </p>
           </div>
         </div>
       </section>
 
       <main className="mx-auto w-full max-w-[1600px] px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {contactItems.map((item) => {
-            const Icon = item.icon;
+        <div className="mb-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/36">
+            Contacto comercial
+          </p>
+          <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.8rem)] uppercase leading-[0.9] tracking-[0.04em] text-brand-charcoal">
+            Contanos que necesita
+            <span className="block text-brand-yellow">tu obra.</span>
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-black/48 sm:text-base">
+            Completa el formulario y te respondemos en menos de 24 hs desde la
+            planta.
+          </p>
+        </div>
 
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-                rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                className="group rounded-[26px] border border-black/8 bg-white/84 p-5 shadow-[0_14px_36px_rgba(0,0,0,0.05)] transition hover:-translate-y-0.5 hover:border-black/14"
+        <div className="grid gap-6 xl:grid-cols-[1fr_2fr_1fr]">
+          <div className="hidden xl:flex flex-col gap-3">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-black/34">
+              Por que elegirnos
+            </p>
+            {trustItems.map(({ icon: Icon, label, value }) => (
+              <div
+                key={label}
+                className="rounded-[18px] border border-black/8 bg-white/80 p-4 shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
               >
-                <Icon
-                  className="h-4 w-4 transition"
-                  style={{ color: item.color ?? "#ffd239" }}
-                />
-                <p className="mt-4 text-[9px] font-semibold uppercase tracking-[0.22em] text-black/34">
-                  {item.label}
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-brand-yellow/16">
+                  <Icon className="h-4 w-4 text-brand-charcoal" />
+                </div>
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/34">
+                  {label}
                 </p>
-                <p className="text-sm leading-6 text-black/64 transition group-hover:text-brand-charcoal">
-                  {item.value}
-                </p>
-              </a>
-            );
-          })}
-        </section>
-
-        <section className="mt-10">
-          <ContactForm prefill={prefill} />
-        </section>
-
-        <section className="mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="relative overflow-hidden rounded-[30px] border border-black/8 bg-[#15120d] p-7 text-white shadow-[0_20px_52px_rgba(0,0,0,0.14)]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(circle at 14% 18%, rgba(255,210,57,0.18) 0%, transparent 28%), radial-gradient(circle at 86% 88%, rgba(255,255,255,0.05) 0%, transparent 22%)",
-              }}
-            />
-            <div className="relative z-10">
-              <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/38">
-                Planta y logistica
-              </p>
-              <h2 className="mt-3 font-display text-[clamp(1.9rem,3vw,3rem)] uppercase leading-[0.94] tracking-[0.04em] text-white">
-                Neuquen Oeste,
-                <span className="block text-brand-yellow">respuesta desde fabrica.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-sm leading-7 text-white/58">
-                Coordinamos entregas, consultas y seguimiento comercial desde la planta para mantener una respuesta mas rapida y precisa.
-              </p>
-
-              <div className="mt-7 space-y-3 text-sm text-white/76">
-                <div className="flex items-start gap-3">
-                  <MapPin className="mt-1 h-4 w-4 flex-shrink-0 text-brand-yellow" />
-                  <span>ENET N 1 2089, Esq. Ing. Huergo, Parque Industrial Neuquen Oeste, Neuquen.</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Clock3 className="mt-1 h-4 w-4 flex-shrink-0 text-brand-yellow" />
-                  <span>Atencion comercial de lunes a viernes, de 8 a 17 hs.</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="mt-1 h-4 w-4 flex-shrink-0 text-brand-yellow" />
-                  <span>Coordina con el equipo para obras, catalogo, piezas especiales y disponibilidad.</span>
-                </div>
+                <p className="mt-1 text-xs leading-5 text-black/58">{value}</p>
               </div>
-            </div>
+            ))}
           </div>
 
-          <div className="overflow-hidden rounded-[30px] border border-black/8 bg-white shadow-[0_16px_44px_rgba(0,0,0,0.08)]">
-            <iframe
-              title="Ubicacion Cimalco Neuquen S.A."
-              src="https://maps.google.com/maps?q=Cimalco+Neuquen+S.A.&t=m&z=15&output=embed&iwloc=near"
-              width="100%"
-              height="100%"
-              style={{ border: 0, display: "block", minHeight: 420 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <ContactForm prefill={prefill} />
+
+          <div className="hidden xl:flex flex-col gap-3">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-black/34">
+              Para completar mejor
+            </p>
+            {tipItems.map(({ num, title, body }) => (
+              <div
+                key={num}
+                className="rounded-[18px] border border-black/8 bg-white/80 p-4 shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
+              >
+                <span className="font-display text-[1.8rem] leading-none text-black/10">
+                  {num}
+                </span>
+                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-black/36">
+                  {title}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-black/52">{body}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
       </main>
 
       <SiteFooter />

@@ -1,5 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Poppins } from "next/font/google";
+import Script from "next/script";
+import { WhatsAppButton } from "@/components/whatsapp-button";
+import {
+  absoluteUrl,
+  defaultDescription,
+  defaultKeywords,
+  defaultOgImage,
+  legalName,
+  organizationSchema,
+  siteName,
+  siteUrl,
+  websiteSchema,
+} from "@/lib/seo";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -17,9 +30,26 @@ const barlowCondensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "Cimalco Patagonia",
-  description:
-    "Premoldeados y pretensados de hormigon para infraestructura en Patagonia.",
+  metadataBase: new URL(siteUrl),
+  applicationName: siteName,
+  title: {
+    default: "Premoldeados y pretensados de hormigon en Neuquen",
+    template: "%s | Cimalco Patagonia",
+  },
+  description: defaultDescription,
+  keywords: defaultKeywords,
+  alternates: {
+    canonical: "/",
+  },
+  category: "construction",
+  authors: [{ name: legalName, url: siteUrl }],
+  creator: legalName,
+  publisher: legalName,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -28,19 +58,80 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/icon.png",
   },
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    title: siteName,
+    description: defaultDescription,
+    url: siteUrl,
+    siteName,
+    locale: "es_AR",
+    type: "website",
+    images: [
+      {
+        url: absoluteUrl(defaultOgImage),
+        width: 1200,
+        height: 630,
+        alt: siteName,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: defaultDescription,
+    images: [absoluteUrl(defaultOgImage)],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
+
+export const viewport: Viewport = {
+  themeColor: "#ffd239",
+};
+
+const googleAnalyticsId = "G-D1RK1H07EP";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = [organizationSchema, websiteSchema];
+
   return (
     <html
       lang="es-AR"
       className={`${poppins.variable} ${barlowCondensed.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full" suppressHydrationWarning>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${googleAnalyticsId}');
+          `}
+        </Script>
+        {structuredData.map((item, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+          />
+        ))}
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 -z-10"
@@ -56,6 +147,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   );

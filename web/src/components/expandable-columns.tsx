@@ -1,88 +1,127 @@
 "use client";
 
-import { Award, ShieldCheck, Truck } from "lucide-react";
 import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 
-const pillars = [
+const stats = [
+  { value: "60+", label: "Años en Patagonia" },
+  { value: "~26.000 m²", label: "Planta en Neuquen" },
+  { value: "4 líneas", label: "Productivas activas" },
+  { value: "Única AT", label: "Postes alta tension" },
+];
+
+const links = [
   {
-    icon: Award,
-    color: "#ffd239",
-    title: "Unica en la region",
-    eyebrow: "Capacidad exclusiva en Patagonia",
-    body: "La unica planta en Patagonia con capacidad para fabricar postes de alta tension. Mas de seis decadas de operacion ininterrumpida desde Neuquen capital, con obras en toda la region hasta Tierra del Fuego.",
+    eyebrow: "Productos",
+    title: "Catalogo 2025",
+    body: "Premoldeados industrializados, pretensados y premoldeados tipicos con fichas tecnicas.",
+    href: "/catalogo",
+    cta: "Ver catalogo",
   },
   {
-    icon: ShieldCheck,
-    color: "#919191",
-    title: "Certificacion y norma",
-    eyebrow: "IRAM · Ley 3338 · Control propio",
-    body: "Bloques y adoquines certificados bajo normas IRAM vigentes. Habilitados con Ley 3338 para operaciones en Oil & Gas. Laboratorio de control y desarrollo de hormigones como respaldo tecnico de cada lote.",
+    eyebrow: "Servicios externos",
+    title: "Montaje y colocacion",
+    body: "Instalacion de premoldeados, adoquines y cercos perimetrales para obras de cualquier escala.",
+    href: "/servicios",
+    cta: "Ver servicios",
   },
   {
-    icon: Truck,
-    color: "#2d2d2d",
-    title: "Logistica directa",
-    eyebrow: "Sin intermediarios desde planta",
-    body: "Fabricamos y entregamos desde Neuquen. Sin depender de distribuidores del centro del pais: menor costo, menor tiempo de espera y trazabilidad directa de planta a obra en toda la Patagonia.",
+    eyebrow: "Contacto directo",
+    title: "Hablemos de tu obra",
+    body: "Respondemos desde planta en menos de 24 hs. Sin intermediarios, directo con el equipo comercial.",
+    href: "/contacto",
+    cta: "Contactanos",
   },
 ];
 
 export function ExpandableColumns() {
   return (
-    <section id="empresa" className="px-5 py-16 sm:px-8 lg:px-10 lg:py-24">
+    <section id="empresa" className="px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
       <div className="mx-auto w-full max-w-[1600px]">
 
-        {/* Section header */}
-        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        {/* Header + stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+        >
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/38">
-              Empresa
+              Empresa · Neuquen, Patagonia
             </p>
-            <h2 className="mt-2 font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
-              Por que Cimalco.
+            <h2 className="mt-2 font-display text-[clamp(2.2rem,4.5vw,4rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
+              60 años fabricando
+              <span className="block text-brand-yellow">Patagonia.</span>
             </h2>
           </div>
-          <p className="max-w-xs text-sm leading-6 text-black/48">
-            Fabricacion propia, entrega directa y respaldo tecnico en cada proyecto.
-          </p>
+          {/* Stats inline on desktop */}
+          <div className="hidden lg:grid grid-cols-4 gap-px overflow-hidden rounded-[18px] border border-black/8 bg-black/6">
+            {stats.map((s) => (
+              <div key={s.label} className="bg-white/90 px-5 py-4">
+                <p className="font-display text-[1.5rem] uppercase leading-none tracking-tight text-brand-charcoal">
+                  {s.value}
+                </p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/38">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Stats mobile */}
+        <div className="mb-8 grid grid-cols-2 gap-2 lg:hidden">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-[16px] border border-black/8 bg-white/80 px-4 py-4">
+              <p className="font-display text-[1.5rem] uppercase leading-none text-brand-charcoal">{s.value}</p>
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/38">{s.label}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Pillars */}
+        {/* Link cards */}
         <div className="grid gap-4 lg:grid-cols-3">
-          {pillars.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.55, delay: index * 0.1 }}
-                className="group rounded-3xl border border-black/10 bg-white/55 p-7 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_8px_40px_rgba(0,0,0,0.12)]"
-              >
-                <div
-                  className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl"
-                  style={{ backgroundColor: item.color, color: item.color === "#2d2d2d" ? "#fff" : "#111" }}
-                >
-                  <Icon className="h-5 w-5" />
-                </div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-black/36">
-                  {item.eyebrow}
-                </p>
-                <h3 className="mt-1.5 font-display text-2xl uppercase leading-none tracking-[0.04em] text-brand-charcoal">
-                  {item.title}
-                </h3>
-                <div
-                  className="mt-4 mb-4 h-[2px] w-10 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                <p className="text-sm leading-7 text-black/58 sm:text-base">
-                  {item.body}
-                </p>
-              </motion.div>
-            );
-          })}
+          {links.map((item, i) => (
+            <motion.a
+              key={item.href}
+              href={item.href}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.45, delay: i * 0.08 }}
+              className="group flex flex-col rounded-[22px] border border-black/8 bg-white/72 p-6 shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition hover:border-brand-yellow/40 hover:shadow-[0_8px_28px_rgba(0,0,0,0.08)]"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/30">{item.eyebrow}</p>
+              <h3 className="mt-2 font-display text-[1.25rem] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
+                {item.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-black/50">{item.body}</p>
+              <div className="mt-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-black/36 transition group-hover:text-brand-charcoal">
+                {item.cta}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              </div>
+            </motion.a>
+          ))}
         </div>
+
+        {/* Credentials strip */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-black/6 pt-6"
+        >
+          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-black/26">Certificaciones</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/44">IRAM · Bloques y adoquines</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/44">Ley 3338 · Oil & Gas</span>
+          <span className="mx-2 hidden h-3 w-px bg-black/14 lg:block" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-black/26">Clientes</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/44">YPF · Tecpetrol · EPEN</span>
+        </motion.div>
+
       </div>
     </section>
   );

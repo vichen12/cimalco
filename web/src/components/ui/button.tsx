@@ -14,11 +14,11 @@ const buttonVariants = cva(
         primary:
           "bg-brand-charcoal px-6 py-4 text-sm text-white hover:bg-black",
         secondary:
-          "border border-white/20 bg-white/8 px-6 py-4 text-sm text-white/76 hover:bg-white/14 hover:text-white",
+          "border border-white/20 bg-white/90 px-6 py-4 text-sm text-brand-charcoal hover:bg-white hover:text-black",
         accent:
           "bg-brand-yellow px-6 py-4 text-sm text-brand-charcoal hover:opacity-90",
         outline:
-          "border border-white/22 bg-transparent px-6 py-4 text-sm text-white/70 hover:bg-white/8 hover:text-white",
+          "border border-white/20 bg-white/90 px-6 py-4 text-sm text-brand-charcoal hover:bg-white hover:text-black",
         ghost:
           "px-4 py-3 text-xs text-white/56 hover:bg-white/8 hover:text-white",
       },

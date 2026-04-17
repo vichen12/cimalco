@@ -2,83 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, MessageCircleWarning } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const formSchema = z.object({
-  name: z.string().min(2, "Escribi tu nombre"),
-  email: z.string().email("Escribi un email valido"),
-  phone: z.string().optional(),
-  company: z.string().min(2, "Escribi tu empresa o rubro"),
-  interest: z.string().min(1, "Selecciona una linea"),
-  requestedItem: z.string().optional(),
-  message: z.string().min(12, "Contanos un poco mas"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const interests = [
-  "Premoldeados industrializados",
-  "Pretensados",
-  "Premoldeados",
-  "Servicios",
-  "Consulta general",
-];
-
-const directContacts = [
-  {
-    icon: Phone,
-    label: "Llamanos",
-    value: "+54 299 436 1973",
-    href: "tel:+5429944361973",
-    color: "#ffd239",
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: "+54 9 2996 109261",
-    href: "https://wa.me/5492996109261",
-    color: "#25d366",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: "consultas@cimalconeuquen.com.ar",
-    href: "mailto:consultas@cimalconeuquen.com.ar",
-    color: "#ffd239",
-  },
-];
-
-const quickFacts = [
-  {
-    icon: Clock3,
-    label: "Respuesta comercial",
-    value: "Menos de 24 hs",
-  },
-  {
-    icon: MapPin,
-    label: "Planta",
-    value: "Neuquen Oeste",
-  },
-  {
-    icon: MessageCircle,
-    label: "Canal directo",
-    value: "WhatsApp activo",
-  },
-];
+import {
+  buildWhatsappUrl,
+  contactInterestOptions,
+  contactSubmissionSchema,
+  type ContactSubmissionInput,
+  type ContactSubmission,
+} from "@/lib/contact";
 
 const inputClassName =
-  "w-full rounded-[22px] border border-black/10 bg-white px-5 py-4 text-sm text-[#2d2d2d] shadow-[0_10px_24px_rgba(0,0,0,0.04)] transition placeholder:text-black/32 focus:border-[#ffd239] focus:outline-none focus:ring-4 focus:ring-[#ffd239]/20";
+  "w-full rounded-[14px] border border-black/10 bg-[#fafaf7] px-5 py-3.5 text-sm text-[#2d2d2d] transition placeholder:text-black/28 focus:border-[#ffd239] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#ffd239]/14";
 
 type ContactFormPrefill = {
   line?: string;
@@ -87,8 +23,15 @@ type ContactFormPrefill = {
   message?: string;
 };
 
+type SubmitResult = {
+  whatsappUrl: string;
+  emailStatus: "sent" | "pending_config" | "failed";
+};
+
 export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const [submitted, setSubmitted] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
+  const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
   const lineFromQuery = prefill?.line ?? "";
   const groupFromQuery = prefill?.group ?? "";
   const itemFromQuery = prefill?.item ?? "";
@@ -102,151 +45,238 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  } = useForm<ContactSubmissionInput, unknown, ContactSubmission>({
+    resolver: zodResolver(contactSubmissionSchema),
     defaultValues: {
       name: "",
       email: "",
       phone: "",
       company: "",
-      interest: "",
-      requestedItem: "",
+      interests: [],
       message: "",
+      line: "",
+      group: "",
+      item: "",
     },
   });
 
-  const selectedInterest = watch("interest");
+  const selectedInterests = watch("interests") ?? [];
+
+  const toggleInterest = (item: string) => {
+    const updated = selectedInterests.includes(item)
+      ? selectedInterests.filter((interest) => interest !== item)
+      : [...selectedInterests, item];
+
+    setValue("interests", updated, { shouldValidate: true });
+  };
 
   useEffect(() => {
-    if (lineFromQuery) {
-      setValue("interest", lineFromQuery, { shouldValidate: true });
-    }
+    setValue("line", lineFromQuery);
+    setValue("group", groupFromQuery);
+    setValue("item", itemFromQuery);
 
-    if (requestedFromQuery) {
-      setValue("requestedItem", requestedFromQuery, { shouldValidate: false });
+    if (lineFromQuery) {
+      setValue("interests", [lineFromQuery], { shouldValidate: true });
     }
 
     if (messageFromQuery) {
       setValue("message", messageFromQuery, { shouldValidate: true });
     }
-  }, [lineFromQuery, requestedFromQuery, messageFromQuery, setValue]);
+  }, [
+    groupFromQuery,
+    itemFromQuery,
+    lineFromQuery,
+    messageFromQuery,
+    setValue,
+  ]);
 
-  const onSubmit = async (values: FormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    console.info("Lead Cimalco", values);
-    setSubmitted(true);
-    reset({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      interest: lineFromQuery,
-      requestedItem: requestedFromQuery,
-      message: messageFromQuery,
-    });
+  const onSubmit = async (values: ContactSubmission) => {
+    setSubmissionError("");
+    const fallbackWhatsappUrl = buildWhatsappUrl(values);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = (await response.json()) as {
+        ok?: boolean;
+        error?: string;
+        whatsappUrl?: string;
+        emailStatus?: "sent" | "pending_config" | "failed";
+      };
+
+      const nextResult = {
+        whatsappUrl: data.whatsappUrl ?? fallbackWhatsappUrl,
+        emailStatus: data.emailStatus ?? "pending_config",
+      } satisfies SubmitResult;
+
+      if (!response.ok || !data.ok) {
+        console.error(
+          "No pudimos guardar la consulta en la base, pero redirigimos a WhatsApp.",
+          data.error,
+        );
+      }
+
+      if (typeof window !== "undefined") {
+        window.location.assign(nextResult.whatsappUrl);
+        return;
+      }
+
+      setSubmitResult(nextResult);
+      setSubmitted(true);
+      reset({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        interests: lineFromQuery ? [lineFromQuery] : [],
+        message: messageFromQuery,
+        line: lineFromQuery,
+        group: groupFromQuery,
+        item: itemFromQuery,
+      });
+    } catch (error) {
+      console.error(
+        "Fallo el envio al backend, pero redirigimos igual a WhatsApp.",
+        error,
+      );
+
+      if (typeof window !== "undefined") {
+        window.location.assign(fallbackWhatsappUrl);
+      }
+    }
   };
 
   if (submitted) {
     return (
-      <section
+      <div
         id="contacto"
-        className="relative overflow-hidden rounded-[32px] border border-black/8 bg-white/88 shadow-[0_20px_60px_rgba(0,0,0,0.08)] backdrop-blur-xl"
+        className="mx-auto flex min-h-[360px] max-w-2xl items-center justify-center rounded-[24px] border border-black/8 bg-white p-10 text-center shadow-[0_16px_48px_rgba(0,0,0,0.06)]"
       >
-        <div className="absolute inset-x-0 top-0 h-[4px] bg-brand-yellow" />
-        <div className="flex min-h-[360px] items-center justify-center px-5 py-16 text-center sm:px-8">
-          <div className="max-w-xl">
-            <div
-              className="mx-auto mb-6 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full"
-              style={{ background: "rgba(255,210,57,0.18)", border: "1px solid rgba(255,210,57,0.35)" }}
-            >
-              <CheckCircle2 className="h-8 w-8 text-brand-charcoal" />
-            </div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/38">
-              Consulta recibida
-            </p>
-            <h3 className="mt-3 font-display text-[clamp(2rem,4vw,3.4rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
-              Te respondemos
-              <span className="block text-brand-yellow">a la brevedad.</span>
-            </h3>
-            <p className="mt-4 text-sm leading-7 text-black/52 sm:text-base">
-              El mensaje ya llego al equipo comercial de Cimalco. Si queres, podes enviar otra consulta.
-            </p>
+        <div>
+          <div
+            className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full"
+            style={{
+              background: "rgba(255,210,57,0.14)",
+              border: "1px solid rgba(255,210,57,0.28)",
+            }}
+          >
+            <CheckCircle2 className="h-6 w-6 text-brand-charcoal" />
+          </div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-black/34">
+            Consulta recibida
+          </p>
+          <h3 className="mt-2 font-display text-[clamp(1.8rem,3.5vw,3rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
+            La consulta ya se
+            <span className="block text-brand-yellow">guardo correctamente.</span>
+          </h3>
+          <p className="mt-3 text-sm leading-7 text-black/46">
+            El mensaje se registro en la base comercial y ya esta listo para
+            seguimiento.
+          </p>
+
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            {submitResult?.whatsappUrl ? (
+              <a
+                href={submitResult.whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#1a1000] transition hover:-translate-y-0.5"
+              >
+                Abrir WhatsApp
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            ) : null}
             <button
-              onClick={() => setSubmitted(false)}
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-charcoal transition hover:border-brand-yellow"
+              onClick={() => {
+                setSubmitted(false);
+                setSubmitResult(null);
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-charcoal transition hover:border-brand-yellow"
             >
-              Nueva consulta
-              <ArrowRight className="h-4 w-4" />
+              Nueva consulta <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section
-      id="contacto"
-      className="relative overflow-hidden rounded-[32px] border border-black/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(247,243,234,0.94)_100%)] shadow-[0_24px_64px_rgba(0,0,0,0.08)] backdrop-blur-xl"
-    >
-      <div className="absolute inset-x-0 top-0 h-[4px] bg-brand-yellow" />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 12% 16%, rgba(255,210,57,0.14) 0%, transparent 28%), radial-gradient(circle at 88% 22%, rgba(45,45,45,0.06) 0%, transparent 24%)",
-        }}
-      />
-
-      <div className="relative grid gap-6 p-5 sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:p-10">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/40">
-            Contacto comercial
-          </p>
-          <h2 className="mt-3 font-display text-[clamp(2.2rem,4vw,4rem)] uppercase leading-[0.9] tracking-[0.04em] text-brand-charcoal">
-            Contanos que necesita
-            <span className="block text-brand-yellow">tu obra.</span>
-          </h2>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-black/54 sm:text-base">
-            Compartinos el tipo de proyecto, la escala y la linea de interes.
-            Armamos una respuesta clara, directa y desde fabrica.
-          </p>
-
-          {lineFromQuery || requestedFromQuery ? (
-            <div className="mt-6 rounded-[24px] border border-[#e7c855] bg-[linear-gradient(135deg,rgba(255,255,255,0.95)_0%,rgba(255,247,214,0.92)_54%,rgba(255,210,57,0.2)_100%)] p-5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/38">
+    <div id="contacto" className="mx-auto w-full max-w-2xl">
+      <div className="overflow-hidden rounded-[24px] border border-black/8 bg-white shadow-[0_16px_52px_rgba(0,0,0,0.07)]">
+        <div className="h-[3px] bg-brand-yellow" />
+        <div className="p-6 sm:p-8">
+          {(lineFromQuery || requestedFromQuery) && (
+            <div className="mb-6 rounded-[14px] border border-[#e8d06a]/50 bg-[rgba(255,247,210,0.5)] px-4 py-3.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/36">
                 Consulta preseleccionada
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {lineFromQuery ? (
-                  <span className="rounded-full bg-[#2d2d2d] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {lineFromQuery && (
+                  <span className="rounded-full bg-[#2d2d2d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
                     {lineFromQuery}
                   </span>
-                ) : null}
-                {groupFromQuery ? (
-                  <span className="rounded-full border border-black/10 bg-white/82 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/58">
-                    {groupFromQuery}
-                  </span>
-                ) : null}
-                {requestedFromQuery ? (
-                  <span className="rounded-full border border-black/10 bg-white/82 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/58">
+                )}
+                {requestedFromQuery && (
+                  <span className="rounded-full border border-black/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/50">
                     {requestedFromQuery}
                   </span>
-                ) : null}
+                )}
               </div>
-              <p className="mt-3 text-sm leading-6 text-black/56">
-                Ya te dejamos la consulta armada para que no tengas que volver a escribir desde cero.
-              </p>
             </div>
-          ) : null}
+          )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <input type="hidden" {...register("line")} />
+            <input type="hidden" {...register("group")} />
+            <input type="hidden" {...register("item")} />
+
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-black/34">
+                Linea de interes
+                <span className="ml-2 font-normal normal-case text-black/28">
+                  (podes seleccionar varias)
+                </span>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {contactInterestOptions.map((item) => {
+                  const active = selectedInterests.includes(item);
+
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => toggleInterest(item)}
+                      className={cn(
+                        "rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-150",
+                        active
+                          ? "border-[#ffd239] bg-[#ffd239] text-[#1a1000] shadow-[0_4px_12px_rgba(255,210,57,0.3)]"
+                          : "border-black/10 bg-white text-black/46 hover:border-black/18 hover:bg-[#fafaf7] hover:text-brand-charcoal",
+                      )}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.interests && (
+                <p className="text-[11px] text-red-500">
+                  {errors.interests.message}
+                </p>
+              )}
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <label
                   htmlFor="name"
-                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
                 >
                   Nombre
                 </label>
@@ -257,13 +287,16 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                   placeholder="Tu nombre"
                   {...register("name")}
                 />
-                {errors.name ? <p className="text-[11px] text-red-500">{errors.name.message}</p> : null}
+                {errors.name && (
+                  <p className="text-[11px] text-red-500">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
-
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
                 >
                   Email
                 </label>
@@ -274,15 +307,16 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                   placeholder="tuemail@empresa.com"
                   {...register("email")}
                 />
-                {errors.email ? <p className="text-[11px] text-red-500">{errors.email.message}</p> : null}
+                {errors.email && (
+                  <p className="text-[11px] text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <label
                   htmlFor="company"
-                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
                 >
                   Empresa o rubro
                 </label>
@@ -293,13 +327,16 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
                   placeholder="Empresa, estudio o rubro"
                   {...register("company")}
                 />
-                {errors.company ? <p className="text-[11px] text-red-500">{errors.company.message}</p> : null}
+                {errors.company && (
+                  <p className="text-[11px] text-red-500">
+                    {errors.company.message}
+                  </p>
+                )}
               </div>
-
               <div className="space-y-2">
                 <label
                   htmlFor="phone"
-                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                  className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
                 >
                   Telefono
                 </label>
@@ -313,71 +350,41 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/38">
-                Linea de interes
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {interests.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setValue("interest", item, { shouldValidate: true })}
-                    className={cn(
-                      "rounded-full border px-4 py-2 text-sm font-medium transition-all duration-150",
-                      selectedInterest === item
-                        ? "border-brand-yellow bg-brand-yellow text-[#1a1000]"
-                        : "border-black/10 bg-white text-black/56 hover:border-black/20 hover:text-brand-charcoal",
-                    )}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-              {errors.interest ? <p className="text-[11px] text-red-500">{errors.interest.message}</p> : null}
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="requestedItem"
-                className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
-              >
-                Producto o consulta
-              </label>
-              <input
-                id="requestedItem"
-                type="text"
-                className={inputClassName}
-                placeholder="Ej. UNI 8, HR 80, Camara C2 o consulta general"
-                {...register("requestedItem")}
-              />
-            </div>
-
             <div className="space-y-2">
               <label
                 htmlFor="message"
-                className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-black/36"
               >
-                Tu proyecto
+                Contanos tu proyecto
               </label>
               <textarea
                 id="message"
-                rows={6}
+                rows={5}
                 className={cn(inputClassName, "resize-none")}
-                placeholder="Tipo de obra, volumen estimado, producto de interes, zona de entrega..."
+                placeholder="Tipo de obra, volumen estimado, zona de entrega..."
                 {...register("message")}
               />
-              {errors.message ? <p className="text-[11px] text-red-500">{errors.message.message}</p> : null}
+              {errors.message && (
+                <p className="text-[11px] text-red-500">
+                  {errors.message.message}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="max-w-sm text-xs leading-6 text-black/42">
-                El mensaje llega directo al equipo comercial y tecnico de Cimalco Patagonia.
-              </p>
+            {submissionError && (
+              <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <div className="flex items-start gap-2">
+                  <MessageCircleWarning className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                  <span>{submissionError}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end pt-1">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-yellow px-8 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] transition hover:brightness-95 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-8 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] shadow-[0_8px_22px_rgba(255,210,57,0.26)] transition hover:-translate-y-0.5 hover:brightness-95 disabled:opacity-60"
               >
                 {isSubmitting ? "Enviando..." : "Enviar consulta"}
                 <ArrowRight className="h-4 w-4" />
@@ -385,80 +392,7 @@ export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
             </div>
           </form>
         </div>
-
-        <aside className="relative overflow-hidden rounded-[30px] bg-[#15120d] p-6 text-white shadow-[0_18px_48px_rgba(0,0,0,0.18)] sm:p-7">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(circle at 18% 14%, rgba(255,210,57,0.16) 0%, transparent 28%), radial-gradient(circle at 88% 92%, rgba(255,255,255,0.06) 0%, transparent 24%)",
-            }}
-          />
-
-          <div className="relative z-10">
-            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/42">
-              Canales directos
-            </p>
-            <h3 className="mt-3 font-display text-[clamp(1.9rem,3vw,2.8rem)] uppercase leading-[0.94] tracking-[0.04em] text-white">
-              Preferis hablar
-              <span className="block text-brand-yellow">primero?</span>
-            </h3>
-            <p className="mt-4 max-w-sm text-sm leading-7 text-white/56">
-              Si ya tenes claro lo que necesitas, podes escribirnos o llamarnos directamente.
-            </p>
-
-            <div className="mt-7 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              {quickFacts.map(({ icon: Icon, label, value }) => (
-                <div
-                  key={label}
-                  className="rounded-[20px] border border-white/10 bg-white/[0.04] px-4 py-4"
-                >
-                  <Icon className="h-4 w-4 text-brand-yellow" />
-                  <p className="mt-3 text-[9px] font-semibold uppercase tracking-[0.22em] text-white/34">
-                    {label}
-                  </p>
-                  <p className="mt-1 text-sm text-white/82">{value}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-7 space-y-3">
-              {directContacts.map(({ icon: Icon, label, value, href, color }) => (
-                <a
-                  key={href}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noreferrer" : undefined}
-                  className="group flex items-center gap-4 rounded-[20px] border border-white/10 bg-white/[0.04] px-4 py-4 transition hover:border-white/18 hover:bg-white/[0.07]"
-                >
-                  <div
-                    className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl"
-                    style={{ background: `${color}18`, border: `1px solid ${color}26` }}
-                  >
-                    <Icon className="h-4.5 w-4.5" style={{ color, width: 18, height: 18 }} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/34">
-                      {label}
-                    </p>
-                    <p className="truncate text-sm font-medium text-white/88">{value}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-
-            <div className="mt-7 rounded-[22px] border border-white/10 bg-black/18 px-4 py-4">
-              <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/34">
-                Planta y atencion
-              </p>
-              <p className="mt-2 text-sm leading-7 text-white/62">
-                Parque Industrial Neuquen Oeste, Argentina. Atendemos lun-vie de 8 a 17 hs.
-              </p>
-            </div>
-          </div>
-        </aside>
       </div>
-    </section>
+    </div>
   );
 }

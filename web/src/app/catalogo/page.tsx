@@ -3,6 +3,9 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { CatalogProductCard } from "@/components/catalog-product-card";
+import { CatalogPremoldeadoCard } from "@/components/catalog-premoldeado-card";
+import { CatalogRevestimientoCard } from "@/components/catalog-revestimiento-card";
+import { LightboxImage } from "@/components/lightbox-image";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -19,15 +22,24 @@ import {
   pretensadosNote,
   pretensadosRows,
   revestimientos,
-  type Revestimiento,
 } from "@/data/catalogo-2025";
 import { buildContactHref } from "@/lib/contact-prefill";
+import { absoluteUrl, createPageMetadata, legalName } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Catalogo 2025 - Cimalco Patagonia",
+export const metadata: Metadata = createPageMetadata({
+  title: "Catalogo 2025",
   description:
-    "Catalogo 2025 de Cimalco Patagonia con premoldeados industrializados, pretensados y premoldeados tipicos.",
-};
+    "Catalogo 2025 de Cimalco Patagonia con premoldeados industrializados, pretensados, adoquines, revestimientos y premoldeados tipicos.",
+  path: "/catalogo",
+  image: "/site-assets/slider3.png",
+  keywords: [
+    "catalogo premoldeados",
+    "catalogo adoquines",
+    "catalogo pretensados",
+    "catalogo postes de hormigon",
+    "catalogo revestimientos hidraulicos",
+  ],
+});
 
 function SectionHeading({
   eyebrow,
@@ -80,7 +92,9 @@ function SubsectionBlock({
             {title}
           </h3>
         </div>
-        <p className="max-w-xl text-sm leading-7 text-black/54">{description}</p>
+        <p className="max-w-xl text-sm leading-7 text-black/54">
+          {description}
+        </p>
       </div>
 
       <div className="mt-7">{children}</div>
@@ -88,63 +102,42 @@ function SubsectionBlock({
   );
 }
 
-function RevestimientoCard({ item }: { item: Revestimiento }) {
-  const contactHref = buildContactHref({
-    line: "Premoldeados industrializados",
-    group: "Revestimientos",
-    item: item.title,
-  });
-
-  return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white/84 shadow-[0_14px_36px_rgba(0,0,0,0.05)]">
-      <div className="h-[4px] bg-brand-yellow" />
-      <div className="flex h-full flex-col p-5 lg:p-6">
-        <h3 className="min-h-[64px] font-display text-[clamp(1.35rem,2vw,2rem)] uppercase tracking-[0.03em] text-brand-charcoal">
-          {item.title}
-        </h3>
-        <div className="relative mt-5 h-[240px] overflow-hidden rounded-[24px] border border-black/6 bg-[linear-gradient(180deg,#ffffff_0%,#f5f2e8_100%)]">
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            className="object-contain p-4"
-          />
-        </div>
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          {item.metrics.map((metric) => (
-            <div
-              key={`${item.title}-${metric.label}`}
-              className="rounded-[16px] border border-black/6 bg-black/[0.03] px-3 py-3"
-            >
-              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-black/34">
-                {metric.label}
-              </p>
-              <p className="mt-1 text-[13px] leading-5 text-black/72">{metric.value}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-auto pt-5">
-          <Button
-            href={contactHref}
-            variant="accent"
-            className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
-          >
-            Contactanos por este producto
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 export default function CatalogoPage() {
-  const bloques = bloqueraProducts.filter((product) => product.family === "Bloquera");
-  const pavimentos = bloqueraProducts.filter((product) => product.family === "Pavimentos");
+  const bloques = bloqueraProducts.filter(
+    (product) => product.family === "Bloquera",
+  );
+  const pavimentos = bloqueraProducts.filter(
+    (product) => product.family === "Pavimentos",
+  );
+  const catalogSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Catalogo 2025",
+    url: absoluteUrl("/catalogo"),
+    description:
+      "Catalogo 2025 de Cimalco Patagonia con lineas de premoldeados industrializados, pretensados y premoldeados tipicos.",
+    inLanguage: "es-AR",
+    about: {
+      "@type": "Corporation",
+      name: legalName,
+    },
+    hasPart: catalogSections.map((section) => ({
+      "@type": "CollectionPage",
+      name: section.title,
+      url: absoluteUrl(`/catalogo#${section.id}`),
+      description: section.description,
+    })),
+  };
 
   return (
-    <div className="relative z-10" style={{ background: "#fffdf0", minHeight: "100vh" }}>
+    <div
+      className="relative z-10"
+      style={{ background: "#fffdf0", minHeight: "100vh" }}
+    >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogSchema) }}
+      />
       <SiteHeader />
 
       <section
@@ -152,7 +145,7 @@ export default function CatalogoPage() {
         style={{
           height: "calc(100vh - 64px)",
           borderBottom: "3px solid #ffd239",
-          backgroundImage: "url('/site-assets/slider3.jpg')",
+          backgroundImage: "url('/site-assets/slider3.png')",
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
         }}
@@ -184,7 +177,9 @@ export default function CatalogoPage() {
             </p>
             <h1 className="mt-2 max-w-[12ch] font-display text-[clamp(2.6rem,5vw,5.2rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
               Tres lineas para
-              <span className="block text-brand-yellow">resolver proyecto.</span>
+              <span className="block text-brand-yellow">
+                resolver proyecto.
+              </span>
             </h1>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
               Premoldeados industrializados, pretensados y premoldeados tipicos
@@ -206,7 +201,7 @@ export default function CatalogoPage() {
               <Button
                 href="/contacto"
                 variant="outline"
-                className="gap-2 border-white/20 px-7 py-3.5 text-[11px] tracking-[0.22em] text-white/70 hover:border-white/50 hover:text-white"
+                className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
               >
                 Contactanos
                 <ArrowRight className="h-4 w-4" />
@@ -295,7 +290,7 @@ export default function CatalogoPage() {
             >
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {revestimientos.map((item) => (
-                  <RevestimientoCard key={item.title} item={item} />
+                  <CatalogRevestimientoCard key={item.title} item={item} />
                 ))}
               </div>
             </SubsectionBlock>
@@ -314,14 +309,12 @@ export default function CatalogoPage() {
             <article className="overflow-hidden rounded-[32px] border border-black/8 bg-white/84 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
               <div className="h-[4px] bg-brand-yellow" />
               <div className="p-6 lg:p-7">
-                <div className="relative h-[320px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#f8f6ef_0%,#ece6d8_100%)]">
-                  <Image
-                    src="/catalogo-2025/pretensados/pretrensado.jpeg"
-                    alt="Pretensados Cimalco Patagonia"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <LightboxImage
+                  src="/catalogo-2025/pretensados/pretrensado.jpeg"
+                  alt="Pretensados Cimalco Patagonia"
+                  containerClassName="h-[320px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#f8f6ef_0%,#ece6d8_100%)]"
+                  imageClassName="object-cover"
+                />
                 <p className="mt-5 text-sm leading-7 text-black/56">
                   La linea de pretensados esta orientada a baja, media y alta
                   tension, con piezas para infraestructura electrica y control
@@ -435,40 +428,9 @@ export default function CatalogoPage() {
               title="Piezas y premoldeados tipicos"
               description="Elementos premoldeados de uso frecuente para obra e infraestructura, con una lectura mucho mas clara por pieza y acceso directo a contacto."
             >
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {premoldeadosTipicos.map((item) => (
-                  <article
-                    key={item.title}
-                    className="flex h-full flex-col overflow-hidden rounded-[24px] border border-black/8 bg-[#f7f2e7]"
-                  >
-                    <div className="relative h-[180px]">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-contain p-5"
-                      />
-                    </div>
-                    <div className="flex h-full flex-col border-t border-black/6 px-4 py-4">
-                      <p className="font-display text-[1.05rem] uppercase tracking-[0.03em] text-brand-charcoal">
-                        {item.title}
-                      </p>
-                      <div className="mt-auto pt-4">
-                        <Button
-                          href={buildContactHref({
-                            line: "Premoldeados",
-                            group: "Premoldeados tipicos",
-                            item: item.title,
-                          })}
-                          variant="accent"
-                          className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
-                        >
-                          Contactanos por esta pieza
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </article>
+                  <CatalogPremoldeadoCard key={item.title} item={item} />
                 ))}
               </div>
             </SubsectionBlock>
@@ -485,14 +447,12 @@ export default function CatalogoPage() {
                     <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black/34">
                       Explicacion de tamanos
                     </p>
-                    <div className="relative mt-5 h-[420px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#fbfaf6_0%,#efe7d7_100%)]">
-                      <Image
-                        src="/catalogo-2025/premoldeados/explicacion-tamanos.png"
-                        alt="Explicacion de tamanos de premoldeados"
-                        fill
-                        className="object-contain p-6"
-                      />
-                    </div>
+                    <LightboxImage
+                      src="/catalogo-2025/premoldeados/explicacion-tamanos.png"
+                      alt="Explicacion de tamanos de premoldeados"
+                      containerClassName="mt-5 h-[420px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#fbfaf6_0%,#efe7d7_100%)]"
+                      imageClassName="object-contain p-6"
+                    />
                     <div className="mt-5">
                       <Button
                         href={buildContactHref({
@@ -523,7 +483,8 @@ export default function CatalogoPage() {
                         </h3>
                       </div>
                       <p className="text-sm leading-6 text-black/46">
-                        Valores externos, internos y espesor segun la tabla entregada.
+                        Valores externos, internos y espesor segun la tabla
+                        entregada.
                       </p>
                     </div>
 
@@ -552,17 +513,34 @@ export default function CatalogoPage() {
                         </thead>
                         <tbody>
                           {camarasTipicas.map((item) => (
-                            <tr key={item.camara} className="border-t border-black/6">
+                            <tr
+                              key={item.camara}
+                              className="border-t border-black/6"
+                            >
                               <td className="px-4 py-3 text-sm font-semibold text-brand-charcoal">
                                 {item.camara}
                               </td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.aExterior}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.bExterior}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.cExterior}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.aInterior}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.bInterior}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.espesor}</td>
-                              <td className="px-4 py-3 text-sm text-black/62">{item.peso}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.aExterior}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.bExterior}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.cExterior}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.aInterior}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.bInterior}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.espesor}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">
+                                {item.peso}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -576,32 +554,7 @@ export default function CatalogoPage() {
         </section>
       </main>
 
-      <div
-        className="relative"
-        style={{ borderTop: "1px solid rgba(0,0,0,0.08)", background: "#111009" }}
-      >
-        <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5 px-5 py-14 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/36">
-              Contacto
-            </p>
-            <p className="mt-1 font-display text-[clamp(1.6rem,3vw,2.4rem)] uppercase leading-tight tracking-[0.04em] text-white">
-              Necesitas una ficha puntual o asistencia comercial.
-            </p>
-          </div>
-          <Button
-            href="/contacto"
-            variant="accent"
-            className="w-fit flex-shrink-0 gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
-          >
-            Contactanos
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
       <SiteFooter />
     </div>
   );
 }
-
