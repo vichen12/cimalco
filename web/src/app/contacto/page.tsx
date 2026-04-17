@@ -57,7 +57,24 @@ const highlights = [
   },
 ];
 
-export default function ContactoPage() {
+type ContactoPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function resolveSearchParam(value: string | string[] | undefined) {
+  if (Array.isArray(value)) return value[0] ?? "";
+  return value ?? "";
+}
+
+export default async function ContactoPage({ searchParams }: ContactoPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const prefill = {
+    line: resolveSearchParam(resolvedSearchParams.line),
+    group: resolveSearchParam(resolvedSearchParams.group),
+    item: resolveSearchParam(resolvedSearchParams.item),
+    message: resolveSearchParam(resolvedSearchParams.message),
+  };
+
   return (
     <div className="relative z-10" style={{ background: "#fffdf0", minHeight: "100vh" }}>
       <SiteHeader />
@@ -174,7 +191,7 @@ export default function ContactoPage() {
         </section>
 
         <section className="mt-10">
-          <ContactForm />
+          <ContactForm prefill={prefill} />
         </section>
 
         <section className="mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">

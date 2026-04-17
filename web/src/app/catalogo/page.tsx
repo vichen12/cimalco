@@ -1,439 +1,607 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Download, MessageCircle } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, Download } from "lucide-react";
+import { CatalogProductCard } from "@/components/catalog-product-card";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import {
+  bloqueraProducts,
+  camarasTipicas,
+  catalogDownloadHref,
+  catalogSections,
+  industrializadosDescription,
+  premoldeadosDescription,
+  premoldeadosTipicos,
+  pretensadosColumns,
+  pretensadosDescription,
+  pretensadosNote,
+  pretensadosRows,
+  revestimientos,
+  type Revestimiento,
+} from "@/data/catalogo-2025";
+import { buildContactHref } from "@/lib/contact-prefill";
 
 export const metadata: Metadata = {
-  title: "Catalogo de Productos — Cimalco Patagonia",
+  title: "Catalogo 2025 - Cimalco Patagonia",
   description:
-    "Fichas tecnicas de bloques, adoquines, postes y piezas especiales de hormigon. Dimensiones, pesos, rendimientos y contacto directo por WhatsApp.",
+    "Catalogo 2025 de Cimalco Patagonia con premoldeados industrializados, pretensados y premoldeados tipicos.",
 };
 
-const WHATSAPP_BASE = "https://wa.me/5492996109261";
-
-type Spec = { label: string; value: string };
-
-type Product = {
+function SectionHeading({
+  eyebrow,
+  title,
+  accent,
+  description,
+}: {
+  eyebrow: string;
   title: string;
-  model: string;
-  family: string;
-  description: string;
   accent: string;
-  image: string;
-  alt: string;
-  specs: Spec[];
-  colors?: string[];
-};
-
-const accentFg = (c: string) => (c === "#2d2d2d" ? "#fff" : "#111");
-
-function resolveColor(color: string) {
-  const n = color.toLowerCase();
-  if (n.includes("gris oscuro")) return "#5e6468";
-  if (n.includes("gris")) return "#9da3a6";
-  if (n.includes("rojo texturizado")) return "#8e5246";
-  if (n.includes("rojo")) return "#9b4e43";
-  if (n.includes("amarillo")) return "#c4a857";
-  if (n.includes("negro")) return "#1f2124";
-  if (n.includes("simil piedra")) return "#908477";
-  return "#d1d5db";
+  description: string;
+}) {
+  return (
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-black/34">
+          {eyebrow}
+        </p>
+        <h2 className="mt-2 font-display text-[clamp(2rem,4vw,3.8rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
+          {title}
+          <span className="block text-brand-yellow">{accent}</span>
+        </h2>
+      </div>
+      <p className="max-w-xl text-sm leading-7 text-black/54 sm:text-base">
+        {description}
+      </p>
+    </div>
+  );
 }
 
-const families = [
-  {
-    id: "bloques",
-    label: "Bloques",
-    accent: "#ffd239",
-  },
-  {
-    id: "pavimentos",
-    label: "Pavimentos",
-    accent: "#41b6e1",
-  },
-  {
-    id: "complementarios",
-    label: "Complementarios",
-    accent: "#919191",
-  },
-];
-
-const products: Product[] = [
-  {
-    title: "Bloque Liso",
-    model: "P20",
-    family: "bloques",
-    description:
-      "El estandar para muros de alta resistencia y terminacion estetica. Certificado IRAM.",
-    accent: "#ffd239",
-    image: "/catalogo/bloque-liso-p20-actualizado.png",
-    alt: "Bloque liso P20 — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 39 cm" },
-      { label: "Peso", value: "14 kg / unidad" },
-      { label: "Rendimiento", value: "12.5 u/m²" },
-      { label: "Pallet", value: "90 u — 1.300 kg" },
-    ],
-    colors: ["Gris", "Rojo", "Amarillo", "Negro"],
-  },
-  {
-    title: "Medio Bloque Liso",
-    model: "P20M",
-    family: "bloques",
-    description:
-      "Para terminaciones, esquinas y ajustes en muro sin necesidad de corte.",
-    accent: "#ffd239",
-    image: "/catalogo/medio-bloque-liso-p20m.png",
-    alt: "Medio bloque liso P20M — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 19 cm" },
-      { label: "Peso", value: "8 kg / unidad" },
-      { label: "Rendimiento", value: "25 u/m²" },
-      { label: "Pallet", value: "180 u — 1.450 kg" },
-    ],
-    colors: ["Gris", "Rojo", "Amarillo", "Negro"],
-  },
-  {
-    title: "Bloque Simil Piedra",
-    model: "SP20",
-    family: "bloques",
-    description:
-      "Terminacion rustica para muros texturados con lectura arquitectonica.",
-    accent: "#2d2d2d",
-    image: "/catalogo/pieza-complementarias-sp20-sp20m.png",
-    alt: "Bloque simil piedra SP20 — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 39 cm" },
-      { label: "Peso", value: "19 kg / unidad" },
-      { label: "Rendimiento", value: "12.5 u/m²" },
-      { label: "Pallet", value: "90 u — 1.900 kg" },
-    ],
-    colors: ["Simil piedra"],
-  },
-  {
-    title: "Medio Bloque Simil Piedra",
-    model: "SP20M",
-    family: "bloques",
-    description:
-      "Ajuste y terminacion de la linea simil piedra sin perder estetica.",
-    accent: "#2d2d2d",
-    image: "/catalogo/pieza-complementarias-sp20-sp20m.png",
-    alt: "Medio bloque simil piedra SP20M — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 19 cm" },
-      { label: "Peso", value: "9.5 kg / unidad" },
-      { label: "Rendimiento", value: "25 u/m²" },
-      { label: "Pallet", value: "180 u — 1.800 kg" },
-    ],
-    colors: ["Simil piedra"],
-  },
-  {
-    title: "Adoquin Uni Stone",
-    model: "UNI8",
-    family: "pavimentos",
-    description:
-      "Pavimento articulado IRAM de alta resistencia para transito vehicular y peatonal.",
-    accent: "#41b6e1",
-    image: "/catalogo/adoquin-uni-stone-8cm.png",
-    alt: "Adoquin Uni Stone 8 cm — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "10.1 × 20.4 × 8 cm" },
-      { label: "Peso", value: "4.2 kg / unidad" },
-      { label: "Rendimiento", value: "40 u/m²" },
-      { label: "Pallet", value: "12.25 m² — 2.116 kg" },
-    ],
-    colors: ["Gris", "Rojo", "Amarillo", "Negro"],
-  },
-  {
-    title: "Adoquin Holanda",
-    model: "H6",
-    family: "pavimentos",
-    description:
-      "Para veredas, accesos y espacios urbanos. Norma IRAM. Municipios y desarrolladoras.",
-    accent: "#41b6e1",
-    image: "/catalogo/adoquin-holanda-6cm-actualizado.png",
-    alt: "Adoquin Holanda 6 cm — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "10 × 20 × 6 cm" },
-      { label: "Peso", value: "2.6 kg / unidad" },
-      { label: "Rendimiento", value: "50 u/m²" },
-      { label: "Pallet", value: "16.2 m² — 2.146 kg" },
-    ],
-    colors: ["Gris", "Rojo", "Amarillo", "Negro"],
-  },
-  {
-    title: "Bloque Liso U",
-    model: "U20",
-    family: "complementarios",
-    description:
-      "Para vigas encadenadas y refuerzos estructurales en mamposteria armada.",
-    accent: "#919191",
-    image: "/catalogo/pieza-complementaria-bloque-liso-u-y-murete.png",
-    alt: "Bloque liso U — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 39 cm" },
-      { label: "Peso", value: "19 kg / unidad" },
-      { label: "Rendimiento", value: "12.5 u/m²" },
-      { label: "Pallet", value: "90 u — 1.750 kg" },
-    ],
-    colors: ["Gris"],
-  },
-  {
-    title: "Bloque Murete",
-    model: "P10",
-    family: "complementarios",
-    description:
-      "Tabiques divisorios delgados y muros de baja carga. Bajo consumo de material.",
-    accent: "#919191",
-    image: "/catalogo/pieza-complementaria-bloque-liso-u-y-murete.png",
-    alt: "Bloque liso murete P10 — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "10 × 19 × 39 cm" },
-      { label: "Peso", value: "7 kg / unidad" },
-      { label: "Rendimiento", value: "12.5 u/m²" },
-      { label: "Pallet", value: "180 u — 1.300 kg" },
-    ],
-    colors: ["Gris"],
-  },
-  {
-    title: "Esquinero Simil Piedra",
-    model: "P20E",
-    family: "complementarios",
-    description:
-      "Pieza de encuentro para resolver esquinas en muros texturados sin perder la continuidad.",
-    accent: "#919191",
-    image: "/catalogo/pieza-complementarias-p20e-psp20.png",
-    alt: "Esquinero simil piedra P20E — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "19 × 19 × 20 cm" },
-      { label: "Peso", value: "10 kg / unidad" },
-      { label: "Rendimiento", value: "25 u/m²" },
-      { label: "Pallet", value: "180 u — 1.800 kg" },
-    ],
-    colors: ["Simil piedra"],
-  },
-  {
-    title: "Placa Simil Piedra",
-    model: "PSP20",
-    family: "complementarios",
-    description:
-      "Placa delgada de alta densidad para revestimientos decorativos superficiales.",
-    accent: "#919191",
-    image: "/catalogo/pieza-complementarias-p20e-psp20.png",
-    alt: "Placa simil piedra PSP20 — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "5 × 19 × 39 cm" },
-      { label: "Peso", value: "11.5 kg / unidad" },
-      { label: "Rendimiento", value: "12.5 u/m²" },
-      { label: "Pallet", value: "190 u — 2.185 kg" },
-    ],
-    colors: ["Simil piedra"],
-  },
-  {
-    title: "Loseta para Ductos",
-    model: "LD",
-    family: "complementarios",
-    description:
-      "Cobertura de canalizaciones subterraneas o senderos. Bajo mantenimiento.",
-    accent: "#2d2d2d",
-    image: "/catalogo/pieza-complementaria-loseta-y-vanoton.png",
-    alt: "Loseta para ductos LD — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "100 × 50 × 7 cm" },
-      { label: "Peso", value: "84 kg / unidad" },
-      { label: "Rendimiento", value: "2 u/m²" },
-      { label: "Pallet", value: "12 u — 1.100 kg" },
-    ],
-    colors: ["Gris oscuro"],
-  },
-  {
-    title: "Adoquin Vanoton",
-    model: "AV8",
-    family: "pavimentos",
-    description:
-      "Textura antideslizante para exteriores de alta circulacion.",
-    accent: "#41b6e1",
-    image: "/catalogo/pieza-complementaria-loseta-y-vanoton.png",
-    alt: "Adoquin Vanoton AV8 — Cimalco Patagonia",
-    specs: [
-      { label: "Dimensiones", value: "10.1 × 20.4 × 9 cm" },
-      { label: "Peso", value: "4.2 kg / unidad" },
-      { label: "Rendimiento", value: "40 u/m²" },
-      { label: "Pallet", value: "12.25 m² — 2.050 kg" },
-    ],
-    colors: ["Rojo texturizado"],
-  },
-];
-
-function ProductCard({ product }: { product: Product }) {
-  const msg = encodeURIComponent(
-    `Hola Cimalco, quiero contactarme por ${product.title} (${product.model}).`
-  );
+function SubsectionBlock({
+  label,
+  title,
+  description,
+  children,
+}: {
+  label: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
   return (
-    <article className="flex flex-col overflow-hidden rounded-[24px] border border-black/8 bg-white/80 shadow-[0_4px_24px_rgba(0,0,0,0.07)] backdrop-blur-sm">
-      {/* Accent bar */}
-      <div className="h-[3px]" style={{ backgroundColor: product.accent }} />
-
-      {/* Image */}
-      <div
-        className="relative h-[200px]"
-        style={{
-          background: `radial-gradient(circle at 30% 30%, ${product.accent}28 0%, transparent 60%), #f8f7f5`,
-        }}
-      >
-        <Image
-          src={product.image}
-          alt={product.alt}
-          fill
-          className="object-contain p-6"
-        />
-        <div
-          className="absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]"
-          style={{ backgroundColor: product.accent, color: accentFg(product.accent) }}
-        >
-          {product.model}
+    <article className="rounded-[34px] border border-black/8 bg-white/72 p-6 shadow-[0_16px_42px_rgba(0,0,0,0.05)] sm:p-7 lg:p-8">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-black/34">
+            {label}
+          </p>
+          <h3 className="mt-2 font-display text-[clamp(1.6rem,3vw,2.6rem)] uppercase leading-[0.96] tracking-[0.03em] text-brand-charcoal">
+            {title}
+          </h3>
         </div>
+        <p className="max-w-xl text-sm leading-7 text-black/54">{description}</p>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-black/36">
-            {families.find((f) => f.id === product.family)?.label}
-          </p>
-          <h3 className="mt-1 font-display text-[1.35rem] uppercase leading-none tracking-[0.03em] text-brand-charcoal">
-            {product.title}
-          </h3>
-          <p className="mt-2 text-[13px] leading-5 text-black/52">
-            {product.description}
-          </p>
-        </div>
+      <div className="mt-7">{children}</div>
+    </article>
+  );
+}
 
-        {/* Specs grid */}
-        <div className="grid grid-cols-2 gap-1.5">
-          {product.specs.map((s) => (
+function RevestimientoCard({ item }: { item: Revestimiento }) {
+  const contactHref = buildContactHref({
+    line: "Premoldeados industrializados",
+    group: "Revestimientos",
+    item: item.title,
+  });
+
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white/84 shadow-[0_14px_36px_rgba(0,0,0,0.05)]">
+      <div className="h-[4px] bg-brand-yellow" />
+      <div className="flex h-full flex-col p-5 lg:p-6">
+        <h3 className="min-h-[64px] font-display text-[clamp(1.35rem,2vw,2rem)] uppercase tracking-[0.03em] text-brand-charcoal">
+          {item.title}
+        </h3>
+        <div className="relative mt-5 h-[240px] overflow-hidden rounded-[24px] border border-black/6 bg-[linear-gradient(180deg,#ffffff_0%,#f5f2e8_100%)]">
+          <Image
+            src={item.image}
+            alt={item.title}
+            fill
+            className="object-contain p-4"
+          />
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          {item.metrics.map((metric) => (
             <div
-              key={s.label}
-              className="rounded-[12px] bg-black/[0.03] px-3 py-2"
+              key={`${item.title}-${metric.label}`}
+              className="rounded-[16px] border border-black/6 bg-black/[0.03] px-3 py-3"
             >
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-black/36">
-                {s.label}
+              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-black/34">
+                {metric.label}
               </p>
-              <p className="mt-0.5 text-[12px] text-black/72">{s.value}</p>
+              <p className="mt-1 text-[13px] leading-5 text-black/72">{metric.value}</p>
             </div>
           ))}
         </div>
 
-        {/* Colors */}
-        {product.colors && product.colors.length > 0 && (
-          <div className="flex items-center gap-2">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-black/34">
-              Colores
-            </p>
-            <div className="flex gap-1.5">
-              {product.colors.map((c) => (
-                <span
-                  key={c}
-                  title={c}
-                  className="h-3.5 w-3.5 rounded-full border border-black/12"
-                  style={{ backgroundColor: resolveColor(c) }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* CTA */}
-        <a
-          href={`${WHATSAPP_BASE}?text=${msg}`}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-yellow px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2d2d2d] transition hover:brightness-95"
-        >
-          Contactanos por WhatsApp
-          <MessageCircle className="h-3.5 w-3.5" />
-        </a>
+        <div className="mt-auto pt-5">
+          <Button
+            href={contactHref}
+            variant="accent"
+            className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
+          >
+            Contactanos por este producto
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </article>
   );
 }
 
 export default function CatalogoPage() {
+  const bloques = bloqueraProducts.filter((product) => product.family === "Bloquera");
+  const pavimentos = bloqueraProducts.filter((product) => product.family === "Pavimentos");
+
   return (
     <div className="relative z-10" style={{ background: "#fffdf0", minHeight: "100vh" }}>
       <SiteHeader />
 
-      {/* Page header */}
       <section
-        className="relative overflow-hidden"
+        className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          minHeight: "calc(78vh - 64px)",
+          height: "calc(100vh - 64px)",
           borderBottom: "3px solid #ffd239",
           backgroundImage: "url('/site-assets/slider3.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.25)_0%,rgba(0,0,0,0.55)_50%,rgba(0,0,0,0.88)_100%)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none">
-          <span className="font-display font-bold uppercase" style={{ fontSize: "clamp(6rem,16vw,16rem)", color: "rgba(255,255,255,0.05)", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: "-0.1em", marginRight: "-0.05em" }}>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.55)_48%,rgba(0,0,0,0.88)_100%)]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
+        >
+          <span
+            className="font-display font-bold uppercase"
+            style={{
+              fontSize: "clamp(6rem,16vw,16rem)",
+              color: "rgba(255,255,255,0.05)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1,
+              marginBottom: "-0.1em",
+              marginRight: "-0.05em",
+            }}
+          >
             CATALOGO
           </span>
         </div>
-        <div className="relative z-10 px-5 pb-14 pt-24 sm:px-8 lg:px-10 lg:pb-16 lg:pt-28">
+
+        <div className="relative z-10 px-5 py-16 sm:px-8 lg:px-10 lg:py-20">
           <div className="mx-auto w-full max-w-[1600px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/36">Catalogo</p>
-            <h1 className="mt-2 font-display text-[clamp(2.4rem,5vw,5rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
-              Catalogo
-              <span className="block text-brand-yellow">completo.</span>
-            </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
-              Bloques, adoquines, postes y piezas especiales de hormigon. Fichas tecnicas,
-              dimensiones, rendimientos y contacto directo con el equipo comercial.
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/36">
+              Catalogo 2025
             </p>
+            <h1 className="mt-2 max-w-[12ch] font-display text-[clamp(2.6rem,5vw,5.2rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
+              Tres lineas para
+              <span className="block text-brand-yellow">resolver proyecto.</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
+              Premoldeados industrializados, pretensados y premoldeados tipicos
+              reunidos en un solo catalogo, con fichas tecnicas, imagenes y
+              acceso al PDF 2025.
+            </p>
+
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href="https://cimalconeuquen.com.ar/archivos/cimalco-catalogo.pdf" target="_blank" rel="noreferrer" variant="accent" className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]">
+              <Button
+                href={catalogDownloadHref}
+                target="_blank"
+                rel="noreferrer"
+                variant="accent"
+                className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
+              >
                 <Download className="h-4 w-4" />
-                Descargar PDF
+                Descargar PDF 2025
               </Button>
-              <Button href="/contacto" variant="outline" className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em] border-white/20 text-white/70 hover:text-white hover:border-white/50">
+              <Button
+                href="/contacto"
+                variant="outline"
+                className="gap-2 border-white/20 px-7 py-3.5 text-[11px] tracking-[0.22em] text-white/70 hover:border-white/50 hover:text-white"
+              >
                 Contactanos
+                <ArrowRight className="h-4 w-4" />
               </Button>
+            </div>
+
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              {catalogSections.map((section) => (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className="rounded-[26px] border border-white/10 bg-white/[0.05] p-5 backdrop-blur-sm transition hover:border-white/18 hover:bg-white/[0.08]"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+                    Linea
+                  </p>
+                  <h2 className="mt-2 font-display text-[1.45rem] uppercase leading-none tracking-[0.03em] text-white">
+                    {section.title}
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-white/58">
+                    {section.description}
+                  </p>
+                </a>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Products by family */}
       <main className="mx-auto w-full max-w-[1600px] px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-        {families.map((family) => {
-          const items = products.filter((p) => p.family === family.id);
-          return (
-            <div key={family.id} className="mb-16 last:mb-0">
-              <div className="mb-8 flex items-center gap-4">
-                <div
-                  className="h-[3px] w-8 rounded-full"
-                  style={{ backgroundColor: family.accent }}
-                />
-                <h2 className="font-display text-[clamp(1.6rem,3vw,2.6rem)] uppercase tracking-[0.06em] text-brand-charcoal">
-                  {family.label}
-                </h2>
-                <span className="text-sm text-black/30">
-                  {items.length} {items.length === 1 ? "producto" : "productos"}
-                </span>
+        <section id="industrializados" className="scroll-mt-28">
+          <SectionHeading
+            eyebrow="Premoldeados industrializados"
+            title="Bloques, adoquines"
+            accent="y revestimientos."
+            description={industrializadosDescription}
+          />
+
+          <div className="mt-10 space-y-8">
+            <SubsectionBlock
+              label="Sublinea 01"
+              title="Bloquera y pavimentos"
+              description="Piezas modulares para mamposteria, circulacion peatonal y superficies de alto transito, con variantes tecnicas y opciones de color."
+            >
+              <div>
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="h-[3px] w-10 rounded-full bg-brand-yellow" />
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-black/40">
+                    Productos bloquera
+                  </p>
+                </div>
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {bloques.map((product) => (
+                    <CatalogProductCard
+                      key={product.code}
+                      product={product}
+                      line="Premoldeados industrializados"
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {items.map((product) => (
-                  <ProductCard key={`${product.title}-${product.model}`} product={product} />
+
+              <div className="mt-8">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="h-[3px] w-10 rounded-full bg-brand-yellow" />
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-black/40">
+                    Pavimentos con opcion color
+                  </p>
+                </div>
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {pavimentos.map((product) => (
+                    <CatalogProductCard
+                      key={product.code}
+                      product={product}
+                      line="Premoldeados industrializados"
+                    />
+                  ))}
+                </div>
+              </div>
+            </SubsectionBlock>
+
+            <SubsectionBlock
+              label="Sublinea 02"
+              title="Revestimientos"
+              description="Soluciones para canales aluvionales y obras hidraulicas, con fichas tecnicas diferenciadas para cada geometria de pieza."
+            >
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {revestimientos.map((item) => (
+                  <RevestimientoCard key={item.title} item={item} />
                 ))}
               </div>
-            </div>
-          );
-        })}
+            </SubsectionBlock>
+          </div>
+        </section>
+
+        <section id="pretensados" className="mt-16 scroll-mt-28">
+          <SectionHeading
+            eyebrow="Pretensados"
+            title="Columnas y piezas"
+            accent="para tendidos electricos."
+            description={pretensadosDescription}
+          />
+
+          <div className="mt-10 grid gap-6 xl:grid-cols-[0.86fr_1.14fr]">
+            <article className="overflow-hidden rounded-[32px] border border-black/8 bg-white/84 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
+              <div className="h-[4px] bg-brand-yellow" />
+              <div className="p-6 lg:p-7">
+                <div className="relative h-[320px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#f8f6ef_0%,#ece6d8_100%)]">
+                  <Image
+                    src="/catalogo-2025/pretensados/pretrensado.jpeg"
+                    alt="Pretensados Cimalco Patagonia"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <p className="mt-5 text-sm leading-7 text-black/56">
+                  La linea de pretensados esta orientada a baja, media y alta
+                  tension, con piezas para infraestructura electrica y control
+                  tecnico en fabrica.
+                </p>
+                <p className="mt-4 text-xs leading-6 text-black/42">
+                  {pretensadosNote}
+                </p>
+                <div className="mt-6">
+                  <Button
+                    href={buildContactHref({
+                      line: "Pretensados",
+                      group: "Columnas y piezas especiales",
+                      item: "Consulta por pretensados",
+                    })}
+                    variant="accent"
+                    className="gap-2 px-6 py-3 text-[11px] tracking-[0.2em]"
+                  >
+                    Contactanos por pretensados
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </article>
+
+            <article className="overflow-hidden rounded-[32px] border border-black/8 bg-white/84 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
+              <div className="h-[4px] bg-brand-yellow" />
+              <div className="p-6 lg:p-7">
+                <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black/34">
+                      Columnas, pesos y medidas
+                    </p>
+                    <h3 className="mt-2 font-display text-[clamp(1.5rem,3vw,2.6rem)] uppercase leading-[0.96] tracking-[0.03em] text-brand-charcoal">
+                      Tabla tecnica
+                    </h3>
+                  </div>
+                  <p className="text-sm leading-6 text-black/46">
+                    Valores de referencia en kg segun longitud y carga limite.
+                  </p>
+                </div>
+
+                <div className="mt-6 max-h-[560px] overflow-auto rounded-[24px] border border-black/8">
+                  <table className="min-w-[1100px] border-collapse text-left">
+                    <thead className="bg-black/[0.03]">
+                      <tr>
+                        <th className="sticky left-0 top-0 z-20 border-r border-black/8 bg-[#f2efe7] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/42">
+                          L (m)
+                        </th>
+                        {pretensadosColumns.map((column, index) => (
+                          <th
+                            key={`${column.load}-${column.diameter}-${index}`}
+                            className="sticky top-0 z-10 bg-[#f2efe7] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/42"
+                          >
+                            {column.load}
+                          </th>
+                        ))}
+                      </tr>
+                      <tr className="border-t border-black/6 bg-white/55">
+                        <th className="sticky left-0 top-[40px] z-20 border-r border-black/8 bg-[#faf7ef] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/42">
+                          Diametro (cm)
+                        </th>
+                        {pretensadosColumns.map((column, index) => (
+                          <th
+                            key={`${column.diameter}-${column.load}-${index}`}
+                            className="sticky top-[40px] z-10 bg-[#faf7ef] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/42"
+                          >
+                            {column.diameter}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pretensadosRows.map((row) => (
+                        <tr
+                          key={row.length}
+                          className="border-t border-black/6"
+                        >
+                          <td className="sticky left-0 z-10 border-r border-black/8 bg-[#fffdf5] px-4 py-3 text-sm font-semibold text-brand-charcoal">
+                            {row.length}
+                          </td>
+                          {row.values.map((value, index) => (
+                            <td
+                              key={`${row.length}-${index}`}
+                              className="px-4 py-3 text-sm text-black/62"
+                            >
+                              {value || "-"}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="premoldeados" className="mt-16 scroll-mt-28">
+          <SectionHeading
+            eyebrow="Premoldeados"
+            title="Bases, bodegas"
+            accent="y camaras tipicas."
+            description={premoldeadosDescription}
+          />
+
+          <div className="mt-10 space-y-8">
+            <SubsectionBlock
+              label="Sublinea 01"
+              title="Piezas y premoldeados tipicos"
+              description="Elementos premoldeados de uso frecuente para obra e infraestructura, con una lectura mucho mas clara por pieza y acceso directo a contacto."
+            >
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {premoldeadosTipicos.map((item) => (
+                  <article
+                    key={item.title}
+                    className="flex h-full flex-col overflow-hidden rounded-[24px] border border-black/8 bg-[#f7f2e7]"
+                  >
+                    <div className="relative h-[180px]">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        className="object-contain p-5"
+                      />
+                    </div>
+                    <div className="flex h-full flex-col border-t border-black/6 px-4 py-4">
+                      <p className="font-display text-[1.05rem] uppercase tracking-[0.03em] text-brand-charcoal">
+                        {item.title}
+                      </p>
+                      <div className="mt-auto pt-4">
+                        <Button
+                          href={buildContactHref({
+                            line: "Premoldeados",
+                            group: "Premoldeados tipicos",
+                            item: item.title,
+                          })}
+                          variant="accent"
+                          className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
+                        >
+                          Contactanos por esta pieza
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </SubsectionBlock>
+
+            <SubsectionBlock
+              label="Sublinea 02"
+              title="Camaras y guia dimensional"
+              description="Tabla de camaras tipicas y apoyo visual de tamanos para que la linea de premoldeados se entienda mucho mas rapido."
+            >
+              <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+                <article className="overflow-hidden rounded-[32px] border border-black/8 bg-white/84 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
+                  <div className="h-[4px] bg-brand-yellow" />
+                  <div className="p-6 lg:p-7">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black/34">
+                      Explicacion de tamanos
+                    </p>
+                    <div className="relative mt-5 h-[420px] overflow-hidden rounded-[26px] border border-black/6 bg-[linear-gradient(180deg,#fbfaf6_0%,#efe7d7_100%)]">
+                      <Image
+                        src="/catalogo-2025/premoldeados/explicacion-tamanos.png"
+                        alt="Explicacion de tamanos de premoldeados"
+                        fill
+                        className="object-contain p-6"
+                      />
+                    </div>
+                    <div className="mt-5">
+                      <Button
+                        href={buildContactHref({
+                          line: "Premoldeados",
+                          group: "Camaras y dimensiones",
+                          item: "Consulta por camaras tipicas",
+                        })}
+                        variant="accent"
+                        className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
+                      >
+                        Contactanos por esta linea
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </article>
+
+                <article className="overflow-hidden rounded-[32px] border border-black/8 bg-white/84 shadow-[0_16px_40px_rgba(0,0,0,0.06)]">
+                  <div className="h-[4px] bg-brand-yellow" />
+                  <div className="p-6 lg:p-7">
+                    <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black/34">
+                          Camaras tipicas
+                        </p>
+                        <h3 className="mt-2 font-display text-[clamp(1.5rem,3vw,2.6rem)] uppercase leading-[0.96] tracking-[0.03em] text-brand-charcoal">
+                          Dimensiones y peso
+                        </h3>
+                      </div>
+                      <p className="text-sm leading-6 text-black/46">
+                        Valores externos, internos y espesor segun la tabla entregada.
+                      </p>
+                    </div>
+
+                    <div className="mt-6 overflow-x-auto rounded-[24px] border border-black/8">
+                      <table className="min-w-[860px] w-full border-collapse text-left">
+                        <thead className="bg-black/[0.03]">
+                          <tr>
+                            {[
+                              "Camara",
+                              "A ext.",
+                              "B ext.",
+                              "C ext.",
+                              "a int.",
+                              "b int.",
+                              "e",
+                              "Peso",
+                            ].map((header) => (
+                              <th
+                                key={header}
+                                className="px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/42"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {camarasTipicas.map((item) => (
+                            <tr key={item.camara} className="border-t border-black/6">
+                              <td className="px-4 py-3 text-sm font-semibold text-brand-charcoal">
+                                {item.camara}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.aExterior}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.bExterior}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.cExterior}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.aInterior}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.bInterior}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.espesor}</td>
+                              <td className="px-4 py-3 text-sm text-black/62">{item.peso}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </SubsectionBlock>
+          </div>
+        </section>
       </main>
+
+      <div
+        className="relative"
+        style={{ borderTop: "1px solid rgba(0,0,0,0.08)", background: "#111009" }}
+      >
+        <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5 px-5 py-14 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/36">
+              Contacto
+            </p>
+            <p className="mt-1 font-display text-[clamp(1.6rem,3vw,2.4rem)] uppercase leading-tight tracking-[0.04em] text-white">
+              Necesitas una ficha puntual o asistencia comercial.
+            </p>
+          </div>
+          <Button
+            href="/contacto"
+            variant="accent"
+            className="w-fit flex-shrink-0 gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
+          >
+            Contactanos
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
 
       <SiteFooter />
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,14 +17,23 @@ import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, "Escribi tu nombre"),
+  email: z.string().email("Escribi un email valido"),
+  phone: z.string().optional(),
   company: z.string().min(2, "Escribi tu empresa o rubro"),
   interest: z.string().min(1, "Selecciona una linea"),
+  requestedItem: z.string().optional(),
   message: z.string().min(12, "Contanos un poco mas"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-const interests = ["Adoquines", "Bloques", "Energia", "Oil & Gas", "Piezas especiales"];
+const interests = [
+  "Premoldeados industrializados",
+  "Pretensados",
+  "Premoldeados",
+  "Servicios",
+  "Consulta general",
+];
 
 const directContacts = [
   {
@@ -71,8 +80,21 @@ const quickFacts = [
 const inputClassName =
   "w-full rounded-[22px] border border-black/10 bg-white px-5 py-4 text-sm text-[#2d2d2d] shadow-[0_10px_24px_rgba(0,0,0,0.04)] transition placeholder:text-black/32 focus:border-[#ffd239] focus:outline-none focus:ring-4 focus:ring-[#ffd239]/20";
 
-export function ContactForm() {
+type ContactFormPrefill = {
+  line?: string;
+  group?: string;
+  item?: string;
+  message?: string;
+};
+
+export function ContactForm({ prefill }: { prefill?: ContactFormPrefill }) {
   const [submitted, setSubmitted] = useState(false);
+  const lineFromQuery = prefill?.line ?? "";
+  const groupFromQuery = prefill?.group ?? "";
+  const itemFromQuery = prefill?.item ?? "";
+  const messageFromQuery = prefill?.message ?? "";
+  const requestedFromQuery = itemFromQuery || groupFromQuery;
+
   const {
     register,
     setValue,
@@ -82,16 +104,46 @@ export function ContactForm() {
     reset,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", company: "", interest: "", message: "" },
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      interest: "",
+      requestedItem: "",
+      message: "",
+    },
   });
 
   const selectedInterest = watch("interest");
+
+  useEffect(() => {
+    if (lineFromQuery) {
+      setValue("interest", lineFromQuery, { shouldValidate: true });
+    }
+
+    if (requestedFromQuery) {
+      setValue("requestedItem", requestedFromQuery, { shouldValidate: false });
+    }
+
+    if (messageFromQuery) {
+      setValue("message", messageFromQuery, { shouldValidate: true });
+    }
+  }, [lineFromQuery, requestedFromQuery, messageFromQuery, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     await new Promise((resolve) => setTimeout(resolve, 600));
     console.info("Lead Cimalco", values);
     setSubmitted(true);
-    reset();
+    reset({
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      interest: lineFromQuery,
+      requestedItem: requestedFromQuery,
+      message: messageFromQuery,
+    });
   };
 
   if (submitted) {
@@ -161,6 +213,34 @@ export function ContactForm() {
             Armamos una respuesta clara, directa y desde fabrica.
           </p>
 
+          {lineFromQuery || requestedFromQuery ? (
+            <div className="mt-6 rounded-[24px] border border-[#e7c855] bg-[linear-gradient(135deg,rgba(255,255,255,0.95)_0%,rgba(255,247,214,0.92)_54%,rgba(255,210,57,0.2)_100%)] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/38">
+                Consulta preseleccionada
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {lineFromQuery ? (
+                  <span className="rounded-full bg-[#2d2d2d] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">
+                    {lineFromQuery}
+                  </span>
+                ) : null}
+                {groupFromQuery ? (
+                  <span className="rounded-full border border-black/10 bg-white/82 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/58">
+                    {groupFromQuery}
+                  </span>
+                ) : null}
+                {requestedFromQuery ? (
+                  <span className="rounded-full border border-black/10 bg-white/82 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/58">
+                    {requestedFromQuery}
+                  </span>
+                ) : null}
+              </div>
+              <p className="mt-3 text-sm leading-6 text-black/56">
+                Ya te dejamos la consulta armada para que no tengas que volver a escribir desde cero.
+              </p>
+            </div>
+          ) : null}
+
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -182,6 +262,25 @@ export function ContactForm() {
 
               <div className="space-y-2">
                 <label
+                  htmlFor="email"
+                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  className={inputClassName}
+                  placeholder="tuemail@empresa.com"
+                  {...register("email")}
+                />
+                {errors.email ? <p className="text-[11px] text-red-500">{errors.email.message}</p> : null}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label
                   htmlFor="company"
                   className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
                 >
@@ -195,6 +294,22 @@ export function ContactForm() {
                   {...register("company")}
                 />
                 {errors.company ? <p className="text-[11px] text-red-500">{errors.company.message}</p> : null}
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+                >
+                  Telefono
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  className={inputClassName}
+                  placeholder="+54 9 ..."
+                  {...register("phone")}
+                />
               </div>
             </div>
 
@@ -220,6 +335,22 @@ export function ContactForm() {
                 ))}
               </div>
               {errors.interest ? <p className="text-[11px] text-red-500">{errors.interest.message}</p> : null}
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="requestedItem"
+                className="block text-[10px] font-bold uppercase tracking-[0.24em] text-black/38"
+              >
+                Producto o consulta
+              </label>
+              <input
+                id="requestedItem"
+                type="text"
+                className={inputClassName}
+                placeholder="Ej. UNI 8, HR 80, Camara C2 o consulta general"
+                {...register("requestedItem")}
+              />
             </div>
 
             <div className="space-y-2">

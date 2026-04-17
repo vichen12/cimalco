@@ -14,7 +14,11 @@ const metrics = [
 
 export function HeroSection() {
   return (
-    <section id="top" className="relative flex h-[calc(100vh-64px)] items-end overflow-hidden">
+    <section
+      id="top"
+      className="relative flex flex-col justify-end overflow-hidden"
+      style={{ height: "calc(100vh - 64px)" }}
+    >
       <video
         autoPlay
         muted
