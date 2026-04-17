@@ -1,0 +1,9 @@
+.claude/
+web/.git/
+web/node_modules/
+web/.next/
+web/out/
+web/.turbo/
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #2d2d2d;
+  --muted: #919191;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: #ffffff;
+  --line: rgba(0, 0, 0, 0.08);
+  --brand-yellow: #ffd239;
+  --brand-charcoal: #2d2d2d;
+  --brand-muted: #919191;
+  --brand-prefab: #41b6e1;
+  --brand-energy: #c9f442;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-prefab: var(--brand-prefab);
+  --color-brand-energy: var(--brand-energy);
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-display);
+  --animate-accordion-down: accordion-down 220ms ease-out;
+  --animate-accordion-up: accordion-up 220ms ease-out;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+}
+
+/* ── Square grid texture overlay ── */
+html::before,
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+html::before {
+  background-image:
+    linear-gradient(rgba(45, 45, 45, 0.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 45, 45, 0.038) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.8;
+}
+
+html::after {
+  background-image:
+    linear-gradient(rgba(255, 210, 57, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 210, 57, 0.12) 1px, transparent 1px);
+  background-size: 112px 112px;
+  opacity: 0.7;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(45, 45, 45, 0.18);
+  color: #1e1b18;
+}
+
+/* Floating label inputs — light theme */
+.field-float {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.14);
+  padding: 1.6rem 0 0.55rem;
+  color: var(--foreground);
+  transition: border-color 200ms ease;
+}
+
+.field-float:focus {
+  outline: none;
+  border-bottom-color: rgba(45, 45, 45, 0.6);
+}
+
+.field-float::placeholder {
+  color: transparent;
+}
+
+/* Legacy field (select) */
+.field {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1rem 1rem 0.95rem;
+  color: var(--foreground);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.field:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.36);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.field::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes yellow-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes bg-glow {
+  0% { opacity: 1; transform: scale(1) translate(0%, 0%); }
+  50% { opacity: 0.65; transform: scale(1.1) translate(5%, -5%); }
+  100% { opacity: 0.85; transform: scale(1.04) translate(-3%, 4%); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes particle-float {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(10px, -16px) scale(1.15); }
+  66%  { transform: translate(-8px, 10px) scale(0.88); }
+  100% { transform: translate(6px, -8px) scale(1.05); }
+}
