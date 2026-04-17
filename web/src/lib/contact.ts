@@ -35,6 +35,11 @@ export const contactSubmissionSchema = z.object({
 
 export type ContactSubmissionInput = z.input<typeof contactSubmissionSchema>;
 export type ContactSubmission = z.infer<typeof contactSubmissionSchema>;
+export type QuickWhatsappSubmission = {
+  interest: string;
+  request: string;
+  timing: string;
+};
 
 function pushIfValue(lines: string[], label: string, value: string) {
   if (value) {
@@ -134,6 +139,21 @@ export function buildWhatsappMessage(payload: ContactSubmission) {
 export function buildWhatsappUrl(payload: ContactSubmission) {
   const baseUrl = `https://wa.me/${contactWhatsappPhone}`;
   return `${baseUrl}?text=${encodeURIComponent(buildWhatsappMessage(payload))}`;
+}
+
+export function buildQuickWhatsappMessage(payload: QuickWhatsappSubmission) {
+  return [
+    "Hola Cimalco, quiero hacer una consulta express desde la web.",
+    "",
+    `Linea de interes: ${payload.interest}`,
+    `Necesito: ${payload.request}`,
+    `Plazo estimado: ${payload.timing}`,
+  ].join("\n");
+}
+
+export function buildQuickWhatsappUrl(payload: QuickWhatsappSubmission) {
+  const baseUrl = `https://wa.me/${contactWhatsappPhone}`;
+  return `${baseUrl}?text=${encodeURIComponent(buildQuickWhatsappMessage(payload))}`;
 }
 
 export function buildWorkbookRow(payload: ContactSubmission, createdAt: string) {
