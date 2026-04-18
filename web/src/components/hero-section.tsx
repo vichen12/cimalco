@@ -49,10 +49,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-[860px]"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-black/34 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/72 backdrop-blur-md">
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-yellow" />
-              Desde Neuquen para toda la Patagonia
-            </div>
+        
 
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.32em] text-white/56 sm:text-xs">
               Cimalco Patagonia
@@ -63,14 +60,14 @@ export function HeroSection() {
             </h1>
 
             <p className="mt-3 max-w-[22ch] font-display text-[clamp(1.2rem,2.4vw,2rem)] uppercase leading-[1] tracking-[0.08em] text-brand-yellow">
-              Para obras que perduran en Patagonia
+              Para obras que perduran en Patagonia 
             </p>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
-              Mas de seis decadas fabricando premoldeados y pretensados de hormigon en Neuquen.
-              Unica planta regional con capacidad para postes de alta tension.
-              Certificacion IRAM. Habilitados con Ley 3338 para Oil & Gas.
-            </p>
+  Mas de seis decadas fabricando premoldeados y pretensados de hormigon en <strong>Neuquen</strong>.
+  Unica planta regional con capacidad para postes de alta tension.
+  Certificacion IRAM. Habilitados con Ley 3338 para Oil & Gas.
+</p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button href="/contacto" variant="accent" className="gap-2 px-8 py-4 text-[11px] tracking-[0.22em]">
