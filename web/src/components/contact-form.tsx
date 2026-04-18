@@ -148,6 +148,15 @@ function MultiSelect({ placeholder, value, onChange, options, error }: MultiSele
               );
             })}
           </div>
+          <div className="border-t border-black/[0.06] p-1.5">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-[10px] bg-brand-yellow py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#1a1000] transition hover:brightness-95"
+            >
+              <Check className="h-3 w-3" /> Listo
+            </button>
+          </div>
         </div>
       )}
     </div>

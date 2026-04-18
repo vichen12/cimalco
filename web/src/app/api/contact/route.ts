@@ -1,108 +1,74 @@
 import { NextResponse } from "next/server";
-import {
-  buildWhatsappUrl,
-  contactSubmissionSchema,
-} from "@/lib/contact";
+import { buildWhatsappUrl, contactSubmissionSchema } from "@/lib/contact";
 
 export const runtime = "nodejs";
 
-function getAppsScriptUrl() {
-  const deploymentId = process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID;
-  const explicitUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
-
-  if (explicitUrl) {
-    return explicitUrl;
-  }
-
-  if (deploymentId) {
-    return `https://script.google.com/macros/s/${deploymentId}/exec`;
-  }
-
-  return null;
-}
-
-async function appendLeadToGoogleSheets(
-  payload: ReturnType<typeof contactSubmissionSchema.parse>,
-  createdAt: string,
-) {
-  const appsScriptUrl = getAppsScriptUrl();
-
-  if (!appsScriptUrl) {
-    throw new Error("Falta configurar GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID.");
-  }
-
-  const response = await fetch(appsScriptUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      createdAt,
-      ...payload,
-    }),
-    redirect: "follow",
-    cache: "no-store",
-  });
-
-  const text = await response.text();
-
-  if (!response.ok) {
-    throw new Error(`Apps Script devolvio ${response.status}: ${text}`);
-  }
-
-  try {
-    const json = JSON.parse(text) as { ok?: boolean; error?: string };
-
-    if (!json.ok) {
-      throw new Error(json.error ?? "Apps Script no pudo guardar la consulta.");
-    }
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      throw new Error("Apps Script no devolvio un JSON valido.");
-    }
-
-    throw error;
-  }
-
-  return appsScriptUrl;
-}
+const SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID
+  ? `https://script.google.com/macros/s/${process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID}/exec`
+  : null;
 
 export async function POST(request: Request) {
+  let body: unknown;
   try {
-    const json = await request.json();
-    const parsed = contactSubmissionSchema.safeParse(json);
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "JSON invalido" }, { status: 400 });
+  }
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "Datos invalidos en el formulario.",
-          issues: parsed.error.flatten(),
-        },
-        { status: 400 },
-      );
+  const parsed = contactSubmissionSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { ok: false, error: "Datos invalidos", issues: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const payload = parsed.data;
+  const waUrl   = buildWhatsappUrl(payload);
+
+  /* ── Google Sheets via Apps Script ── */
+  if (!SCRIPT_URL) {
+    console.error("[contact] GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID no configurado");
+    return NextResponse.json({ ok: false, error: "Apps Script no configurado", whatsappUrl: waUrl }, { status: 500 });
+  }
+
+  try {
+    const row = {
+      createdAt: new Date().toISOString(),
+      name:      payload.name,
+      email:     payload.email,
+      phone:     payload.phone ?? "",
+      company:   payload.company,
+      interests: payload.interests.join(", "),
+      obra:      payload.obra ?? "",
+      zone:      payload.zone ?? "",
+      message:   payload.message,
+      line:      payload.line ?? "",
+      group:     payload.group ?? "",
+      item:      payload.item ?? "",
+    };
+
+    const res  = await fetch(SCRIPT_URL, {
+      method:   "POST",
+      redirect: "follow",
+      headers:  { "Content-Type": "application/json" },
+      body:     JSON.stringify(row),
+    });
+
+    const text = await res.text();
+    console.log("[contact] Apps Script response:", res.status, text);
+
+    let json: { ok?: boolean; error?: string } = {};
+    try { json = JSON.parse(text) as typeof json; } catch { /* non-JSON response */ }
+
+    if (!res.ok || json.ok === false) {
+      console.error("[contact] Apps Script error:", text);
+      return NextResponse.json({ ok: false, error: "Apps Script error", whatsappUrl: waUrl }, { status: 502 });
     }
 
-    const payload = parsed.data;
-    const createdAt = new Date().toISOString();
-    const googleSheetsUrl = await appendLeadToGoogleSheets(payload, createdAt);
-
-    return NextResponse.json({
-      ok: true,
-      emailStatus: "sent",
-      whatsappUrl: buildWhatsappUrl(payload),
-      savedTo: googleSheetsUrl,
-    });
-  } catch (error) {
-    console.error("Error al procesar formulario de contacto", error);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "No pudimos guardar la consulta en Google Sheets. Revisa la implementacion del Apps Script o su deployment ID.",
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ ok: true, whatsappUrl: waUrl });
+  } catch (err) {
+    console.error("[contact] fetch error:", err);
+    return NextResponse.json({ ok: false, error: "Error de red", whatsappUrl: waUrl }, { status: 500 });
   }
 }
