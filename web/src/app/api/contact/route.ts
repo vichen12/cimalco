@@ -3,9 +3,7 @@ import { buildWhatsappUrl, contactSubmissionSchema } from "@/lib/contact";
 
 export const runtime = "nodejs";
 
-const SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID
-  ? `https://script.google.com/macros/s/${process.env.GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID}/exec`
-  : null;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwN8MwN41IUcIB4yUQpc78vpyzUTQ2I9Hk369kFS0o9Nsh9ocsn0Tw18pYAnCyL_XTd/exec";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -27,11 +25,6 @@ export async function POST(request: Request) {
   const waUrl   = buildWhatsappUrl(payload);
 
   /* ── Google Sheets via Apps Script ── */
-  if (!SCRIPT_URL) {
-    console.error("[contact] GOOGLE_APPS_SCRIPT_DEPLOYMENT_ID no configurado");
-    return NextResponse.json({ ok: false, error: "Apps Script no configurado", whatsappUrl: waUrl }, { status: 500 });
-  }
-
   try {
     const row = {
       createdAt: new Date().toISOString(),
