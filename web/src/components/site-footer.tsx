@@ -40,6 +40,7 @@ export function SiteFooter() {
         </span>
       </div>
 
+      {/* CTA banner */}
       <div
         className="relative overflow-hidden"
         style={{
@@ -51,13 +52,13 @@ export function SiteFooter() {
       >
         <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5 px-5 py-9 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10 lg:py-10">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-black/36">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-black/60">
               Patagonia norte | Desde 1947
             </p>
             <p className="mt-1.5 font-display text-[clamp(1.4rem,2.2vw,2rem)] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
               Fabricamos lo que tu obra necesita.
             </p>
-            <p className="mt-2 text-sm leading-6 text-black/46">
+            <p className="mt-2 text-sm leading-6 text-black/70">
               Consultanos por producto, volumen y zona. Te respondemos desde fabrica.
             </p>
           </div>
@@ -71,8 +72,11 @@ export function SiteFooter() {
         </div>
       </div>
 
+      {/* main footer grid */}
       <div className="relative mx-auto w-full max-w-[1600px] px-5 py-14 sm:px-8 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.6fr_2fr_1.4fr]">
+
+          {/* col 1: logo + contact */}
           <div className="flex flex-col gap-8">
             <div>
               <div className="relative h-11 w-[190px]">
@@ -83,35 +87,36 @@ export function SiteFooter() {
                   className="object-contain object-left"
                 />
               </div>
-              <p className="mt-5 text-sm leading-7 text-white/74">
+              <p className="mt-5 text-sm leading-7 text-white/90">
                 Premoldeados y pretensados de hormigon para infraestructura, energia,
                 Oil & Gas, vial y proyectos especiales en Patagonia norte. Desde 1947.
               </p>
             </div>
 
             <div className="space-y-3.5">
-              <div className="flex items-center gap-3 text-sm text-white/82">
-                <Phone className="h-4 w-4 flex-shrink-0 text-brand-yellow/70" />
+              <div className="flex items-center gap-3 text-sm text-white">
+                <Phone className="h-4 w-4 flex-shrink-0 text-brand-yellow" />
                 0299 4422656 / 299 4361973
               </div>
               <a
                 href="mailto:consultas@cimalconeuquen.com.ar"
-                className="group flex items-start gap-3 text-sm text-white/82 transition hover:text-white"
+                className="group flex items-start gap-3 text-sm text-white transition hover:text-brand-yellow"
               >
-                <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-yellow/70 transition group-hover:text-brand-yellow" />
+                <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-yellow transition group-hover:text-brand-yellow" />
                 consultas@cimalconeuquen.com.ar
               </a>
-              <div className="flex items-center gap-3 text-sm text-white/82">
-                <Building2 className="h-4 w-4 flex-shrink-0 text-brand-yellow/70" />
+              <div className="flex items-center gap-3 text-sm text-white">
+                <Building2 className="h-4 w-4 flex-shrink-0 text-brand-yellow" />
                 Cimalco Neuquen S.A.
               </div>
             </div>
           </div>
 
+          {/* col 2: map */}
           <div className="flex flex-col gap-3">
             <div
               className="overflow-hidden rounded-2xl"
-              style={{ border: "1px solid rgba(255,255,255,0.10)", minHeight: 280 }}
+              style={{ border: "1px solid rgba(255,255,255,0.14)", minHeight: 280 }}
             >
               <iframe
                 title="Ubicacion Cimalco Neuquen S.A."
@@ -124,15 +129,16 @@ export function SiteFooter() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <div className="flex items-start gap-2 text-sm text-white/62">
-              <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-white/26" />
+            <div className="flex items-start gap-2 text-sm text-white/80">
+              <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-brand-yellow" />
               ENET n. 1 2089, Esq. Ing. Huergo - Parque Industrial Neuquen Oeste, 8300
             </div>
           </div>
 
+          {/* col 3: nav */}
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-1 lg:gap-10">
             <div>
-              <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/52">
+              <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">
                 Verticales
               </p>
               <div className="space-y-3">
@@ -140,7 +146,7 @@ export function SiteFooter() {
                   <a
                     key={item.label}
                     href={item.href}
-                    className="group flex items-center gap-2 text-sm text-white/78 transition hover:text-white"
+                    className="group flex items-center gap-2 text-sm text-white transition hover:text-brand-yellow"
                   >
                     <span className="h-px w-0 flex-shrink-0 rounded-full bg-brand-yellow transition-all duration-300 group-hover:w-4" />
                     {item.label}
@@ -150,7 +156,7 @@ export function SiteFooter() {
             </div>
 
             <div>
-              <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/52">
+              <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.28em] text-white/70">
                 Navegacion
               </p>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
@@ -158,7 +164,7 @@ export function SiteFooter() {
                   <a
                     key={item.href}
                     href={item.href}
-                    className="group flex items-center gap-2 text-sm text-white/78 transition hover:text-white"
+                    className="group flex items-center gap-2 text-sm text-white transition hover:text-brand-yellow"
                   >
                     <span className="h-px w-0 flex-shrink-0 rounded-full bg-brand-yellow transition-all duration-300 group-hover:w-4" />
                     {item.label}
@@ -170,20 +176,21 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="relative" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+      {/* bottom bar */}
+      <div className="relative" style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}>
         <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-1 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p className="text-xs text-white/58">
+          <p className="text-xs text-white/70">
             (c) {new Date().getFullYear()} Cimalco Neuquen S.A. - Todos los derechos reservados.
           </p>
           <div className="flex flex-col items-start gap-1 sm:items-end">
-            <p className="text-xs text-white/44">
+            <p className="text-xs text-white/65">
               Parque Industrial Neuquen Oeste, Argentina.
             </p>
             <a
               href="https://instagram.com/dallapesystems/"
               target="_blank"
               rel="noreferrer"
-              className="text-xs text-white/52 transition hover:text-white/78"
+              className="text-xs text-white/60 transition hover:text-white"
             >
               Disenada por dallapesystems
             </a>

@@ -17,7 +17,8 @@ export function HeroSection() {
     <section
       id="top"
       className="relative flex flex-col justify-end overflow-hidden"
-      style={{ minHeight: "calc(100svh - 60px)" }}
+      // CAMBIO 1: Usamos svh para un cálculo más preciso del alto de la pantalla
+      style={{ minHeight: "calc(100svh - 60px)" }} 
     >
       <video
         autoPlay
@@ -39,7 +40,8 @@ export function HeroSection() {
 
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.48)_0%,rgba(0,0,0,0.42)_32%,rgba(0,0,0,0.84)_100%)]" />
 
-      <div className="relative z-10 w-full px-5 pb-10 pt-28 sm:px-8 sm:pb-12 lg:px-10 lg:pb-16">
+      {/* CAMBIO 2: Aumentamos los valores de pb (padding-bottom) de pb-10/12/16 a pb-20/24/32 */}
+      <div className="relative z-10 w-full px-5 pb-20 pt-0 sm:px-8 sm:pb-24 lg:px-10 lg:pb-32">
         <div className="mx-auto w-full max-w-[1600px]">
           <motion.div
             initial={{ opacity: 0, y: 26 }}

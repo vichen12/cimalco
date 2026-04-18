@@ -200,7 +200,7 @@ export default function CatalogoPage() {
                 className="gap-2 px-7 py-3.5 text-[11px] tracking-[0.22em]"
               >
                 <Download className="h-4 w-4" />
-                Descargar PDF 2025
+                Descargar catalogo PDF
               </Button>
               <Button
                 href="/contacto"
