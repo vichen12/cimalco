@@ -80,6 +80,12 @@ export function WhatsAppButton() {
   const onSubmit = (values: FormValues) => {
     window.open(buildWaUrl(values), "_blank", "noopener,noreferrer");
     setSent(true);
+
+    fetch("/api/contact-quick", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(values),
+    }).catch(() => { /* silent */ });
   };
 
   return (
