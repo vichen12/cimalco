@@ -24,9 +24,13 @@ function resolveColor(color: string) {
 export function CatalogProductCard({
   product,
   line = "Catalogo 2025",
+  accentColor = "#ffd239",
+  accentFg = "#201708",
 }: {
   product: CatalogProduct;
   line?: string;
+  accentColor?: string;
+  accentFg?: string;
 }) {
   const [selectedColor, setSelectedColor] = useState<CatalogColorOption | null>(
     product.colorOptions?.[0] ?? null,
@@ -40,7 +44,7 @@ export function CatalogProductCard({
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white/84 shadow-[0_14px_36px_rgba(0,0,0,0.05)]">
-      <div className="h-[4px] bg-brand-yellow" />
+      <div className="h-[4px]" style={{ backgroundColor: accentColor }} />
       <div className="flex h-full flex-col p-5 lg:p-6">
         {/* Card header */}
         <div className="flex items-start justify-between gap-4">
@@ -52,7 +56,7 @@ export function CatalogProductCard({
               {product.title}
             </h3>
           </div>
-          <span className="rounded-full bg-brand-yellow px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#201708]">
+          <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ backgroundColor: accentColor, color: accentFg }}>
             {product.code}
           </span>
         </div>
@@ -176,6 +180,7 @@ export function CatalogProductCard({
                           href={contactHref}
                           variant="accent"
                           className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
+                          style={{ backgroundColor: accentColor, color: accentFg }}
                         >
                           Consultar este producto
                           <ArrowRight className="h-4 w-4" />
@@ -269,6 +274,7 @@ export function CatalogProductCard({
             href={contactHref}
             variant="accent"
             className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
+            style={{ backgroundColor: accentColor, color: accentFg }}
           >
             Contactanos por este producto
             <ArrowRight className="h-4 w-4" />

@@ -52,24 +52,46 @@ const families = [
   },
   {
     index: "03",
-    title: "Camaras y postes",
-    sub: "Infraestructura tecnica",
-    category: "Energia + Oil & Gas",
+    title: "Piezas Industriales",
+    sub: "Camaras, bases, sleepers",
+    category: "Oil & Gas + Industria",
     image: "/Lo que fabricamos/camaras y postes.png",
-    alt: "Camaras y postes de hormigon Cimalco",
+    alt: "Piezas industriales premoldeadas Cimalco",
     summary:
-      "Prefabricados para infraestructura de alta exigencia, con fabricacion especial y respuesta tecnica para energia, industria y yacimiento.",
+      "Nuestra actividad principal en crecimiento. Cámaras, bases, sleepers y piezas a medida para industria y yacimiento. Producto estrella: Base para equipos AIB.",
     specs: [
-      { name: "Camaras de valvulas", note: "Oil & Gas e industria" },
-      { name: "Postes BT / MT", note: "Con referencia IRAM" },
-      { name: "Piezas especiales a medida" },
+      { name: "Base para equipos AIB", note: "Producto estrella" },
+      { name: "Cámaras de válvulas", note: "Oil & Gas e industria" },
+      { name: "Desarrollo a pedido" },
     ],
-    accent: "#c9f442",
-    accentFg: "#0f1a00",
+    accent: "#41b6e1",
+    accentFg: "#001a24",
     contactHref: buildContactHref({
       line: "Premoldeados",
-      group: "Camaras y postes",
-      item: "Consulta por camaras y postes",
+      group: "Piezas industriales",
+      item: "Consulta por piezas industriales",
+    }),
+  },
+  {
+    index: "04",
+    title: "Bloques HR",
+    sub: "Proteccion de erosiones",
+    category: "Hidraulica + Vial",
+    image: "/Donde opera Cimalco/vial.png",
+    alt: "Bloques HR proteccion de erosiones Cimalco",
+    summary:
+      "Sistema de proteccion de erosiones para canales, taludes y obras hidraulicas. Alternativa tecnica a colchonetas, enrocados y sistemas Maccaferi.",
+    specs: [
+      { name: "HR 60 / HR 80 / HRD 100", note: "Segun proyecto" },
+      { name: "Canales y taludes", note: "Obras hidraulicas" },
+      { name: "Alternativa a Maccaferi" },
+    ],
+    accent: "#41b6e1",
+    accentFg: "#001a24",
+    contactHref: buildContactHref({
+      line: "Premoldeados industrializados",
+      group: "Bloques HR",
+      item: "Consulta por bloques HR",
     }),
   },
 ];
@@ -79,20 +101,12 @@ export function ProductRows() {
     <section id="productos" className="px-5 py-16 sm:px-8 lg:px-10 lg:py-24">
       <div className="mx-auto w-full max-w-[1600px]">
         <div className="mb-12 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/38">
-              Productos
-            </p>
-            <h2 className="mt-2 font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
-              Lo que fabricamos.
-            </h2>
-          </div>
           <p className="max-w-md text-sm leading-7 text-black/52 sm:text-base">
-            Tres familias con presencia visual propia, lectura mas clara y un acceso directo para consultar exactamente la linea que necesitas.
+            Cuatro familias de producto. Cada una con su propio mercado y respuesta tecnica diferenciada.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {families.map((item, index) => (
             <motion.article
               key={item.title}

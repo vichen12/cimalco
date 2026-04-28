@@ -257,32 +257,45 @@ export default function ServiciosPage() {
 
         {/* Beneficios */}
         <section className="mt-14">
-          <div className="mb-8">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-black/34">
-              Beneficios destacados
-            </p>
-            <h2 className="mt-2 font-display text-[clamp(1.8rem,3.5vw,3rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
-              Por que trabajar
-              <span className="block text-brand-yellow">con Cimalco.</span>
-            </h2>
+          <div className="mb-10 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-black/34">
+                Beneficios destacados
+              </p>
+              <h2 className="mt-2 font-display text-[clamp(1.8rem,3.5vw,3rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
+                Por que trabajar
+                <span className="block text-brand-yellow">con Cimalco.</span>
+              </h2>
+            </div>
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
-            {benefits.map((benefit) => {
+            {benefits.map((benefit, i) => {
               const Icon = benefit.icon;
+              const colors = [
+                { bg: "#ffd239", fg: "#1a1000", light: "rgba(255,210,57,0.10)" },
+                { bg: "#41b6e1", fg: "#001a24", light: "rgba(65,182,225,0.10)" },
+              ];
+              const c = colors[i % colors.length];
               return (
                 <article
                   key={benefit.title}
-                  className="flex gap-5 rounded-[28px] border border-black/8 bg-white/84 p-6 shadow-[0_12px_32px_rgba(0,0,0,0.05)] lg:p-8"
+                  className="relative flex flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
                 >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-yellow/16">
-                    <Icon className="h-5 w-5 text-brand-charcoal" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-[1.4rem] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
-                      {benefit.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-7 text-black/56">{benefit.description}</p>
+                  <div className="h-[5px]" style={{ backgroundColor: c.bg }} />
+                  <div className="flex gap-5 p-7 lg:p-8">
+                    <div
+                      className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl"
+                      style={{ backgroundColor: c.light }}
+                    >
+                      <Icon className="h-5 w-5" style={{ color: c.fg === "#001a24" ? "#0e6a94" : "#8a6800" }} />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-[clamp(1.3rem,2vw,1.6rem)] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
+                        {benefit.title}
+                      </h3>
+                      <p className="mt-3 text-sm leading-7 text-black/54">{benefit.description}</p>
+                    </div>
                   </div>
                 </article>
               );

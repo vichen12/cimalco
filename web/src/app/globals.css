@@ -78,9 +78,11 @@ html::before {
   scrollbar-color: rgba(45, 45, 45, 0.18) transparent;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 button,
@@ -91,8 +93,8 @@ textarea {
 }
 
 ::selection {
-  background: rgba(45, 45, 45, 0.18);
-  color: #1e1b18;
+  background: #b8d9f5;
+  color: #1a2d3d;
 }
 
 /* Floating label inputs — light theme */

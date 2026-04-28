@@ -71,7 +71,7 @@ const tipItems = [
   {
     num: "04",
     title: "Linea de interes",
-    body: "Bloquera, revestimientos, pretensados o premoldeados tipicos.",
+    body: "Piezas industriales, Bloques HR, adoquines, bloques o postes pretensados.",
   },
 ];
 

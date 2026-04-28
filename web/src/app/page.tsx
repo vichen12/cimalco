@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { BrandCarousel } from "@/components/brand-carousel";
 import { ExpandableColumns } from "@/components/expandable-columns";
 import { HeroSection } from "@/components/hero-section";
 import { Particles } from "@/components/particles";
-import { ProductRows } from "@/components/product-rows";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { VerticalSections } from "@/components/vertical-sections";
@@ -88,10 +86,8 @@ export default function Home() {
       <div className="relative z-10" style={{ background: "#fffdf0" }} >
         <SiteHeader />
         <HeroSection />
-        <ExpandableColumns />
         <VerticalSections />
-        <ProductRows />
-        <BrandCarousel />
+        <ExpandableColumns />
         <SiteFooter />
       </div>
     </main>

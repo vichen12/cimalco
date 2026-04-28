@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, BookOpen, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 
@@ -9,7 +9,7 @@ const metrics = [
   { value: "1947", label: "Fundacion" },
   { value: "26.000 m2", label: "Planta propia" },
   { value: "IRAM", label: "Certificacion" },
-  { value: "Directa", label: "Venta" },
+  { value: "Ley 3338", label: "Empresa Neuquina" },
 ];
 
 export function HeroSection() {
@@ -17,8 +17,7 @@ export function HeroSection() {
     <section
       id="top"
       className="relative flex flex-col justify-end overflow-hidden"
-      // CAMBIO 1: Usamos svh para un cálculo más preciso del alto de la pantalla
-      style={{ minHeight: "calc(100svh - 60px)" }} 
+      style={{ minHeight: "calc(100svh - 60px)" }}
     >
       <video
         autoPlay
@@ -40,47 +39,38 @@ export function HeroSection() {
 
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.48)_0%,rgba(0,0,0,0.42)_32%,rgba(0,0,0,0.84)_100%)]" />
 
-      {/* CAMBIO 2: Aumentamos los valores de pb (padding-bottom) de pb-10/12/16 a pb-20/24/32 */}
       <div className="relative z-10 w-full px-5 pb-20 pt-0 sm:px-8 sm:pb-24 lg:px-10 lg:pb-32">
         <div className="mx-auto w-full max-w-[1600px]">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-[860px]"
+            className="max-w-[820px]"
           >
-        
-
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.32em] text-white/56 sm:text-xs">
-              Cimalco Patagonia
+              Cimalco Patagonia · Empresa Neuquina desde 1947
             </p>
 
-            <h1 className="mt-3 max-w-[13ch] font-display text-[clamp(2.9rem,6vw,6.2rem)] uppercase leading-[0.92] tracking-[0.02em] text-white">
-              Hormigon industrial
+            <h1 className="mt-3 font-display text-[clamp(2rem,4.8vw,5rem)] uppercase leading-[0.92] tracking-[0.02em] text-white">
+              Premoldeados, pretensados<br className="hidden sm:block" />
+              {" "}e industrializados en serie.
             </h1>
 
-            <p className="mt-3 max-w-[22ch] font-display text-[clamp(1.2rem,2.4vw,2rem)] uppercase leading-[1] tracking-[0.08em] text-brand-yellow">
-              Para obras que perduran en Patagonia 
+            <p className="mt-3 max-w-[32ch] font-display text-[clamp(1.05rem,2.2vw,1.7rem)] uppercase leading-[1.1] tracking-[0.08em] text-brand-yellow">
+              Para obras que perduran en Patagonia
             </p>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
-  Mas de seis decadas fabricando premoldeados y pretensados de hormigon en <strong>Neuquen</strong>.
-  Unica planta regional con capacidad para postes de alta tension.
-  Certificacion IRAM. Habilitados con Ley 3338 para Oil & Gas.
-</p>
+              Mas de seis decadas fabricando en Patagonia norte.
+              Unica planta regional con capacidad para postes de alta tension.
+              Cobertura desde Neuquen hasta Tierra del Fuego.
+              Certificacion IRAM. Habilitados con Ley 3338 para Oil & Gas.
+            </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button href="/contacto" variant="accent" className="gap-2 px-8 py-4 text-[11px] tracking-[0.22em]">
                 Contactanos
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button
-                href="/catalogo"
-                variant="outline"
-                className="gap-2 px-7 py-4 text-[11px] tracking-[0.22em]"
-              >
-                <BookOpen className="h-4 w-4" />
-                Ver catalogo
               </Button>
             </div>
           </motion.div>

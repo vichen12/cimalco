@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const siteUrl = "https://www.cimalconeuquen.com.ar";
+export const siteUrl = "https://www.cimalcopatagonia.com.ar";
 export const siteName = "Cimalco Patagonia";
 export const legalName = "Cimalco Neuquen S.A.";
 export const defaultOgImage = "/site-assets/premoldeados-de-hormigon.jpg";
@@ -9,15 +9,33 @@ export const defaultDescription =
 
 export const defaultKeywords = [
   "premoldeados Neuquen",
-  "pretensados Neuquen",
   "premoldeados Patagonia",
-  "postes de hormigon",
-  "adoquines de hormigon",
-  "bloques de hormigon",
-  "camaras premoldeadas",
-  "revestimientos hidraulicos",
+  "fabricante premoldeados Neuquen",
+  "hormigon premoldeado Patagonia",
+  "postes de hormigon pretensado Neuquen",
+  "postes de alta tension Patagonia",
+  "postes pretensados Patagonia",
+  "lineas electricas Patagonia",
+  "premoldeados Vaca Muerta",
+  "premoldeados Oil and Gas Neuquen",
+  "piezas industriales hormigon Oil Gas",
+  "base para equipos AIB",
+  "base AIB Oil Gas Neuquen",
+  "camaras de valvulas premoldeadas",
+  "sleepers premoldeados",
+  "bloques HR proteccion de erosiones",
+  "proteccion de taludes hormigon",
+  "sistema proteccion hidraulica hormigon",
+  "adoquines Neuquen",
+  "adoquin Uni Stone 8 cm",
+  "adoquin Holanda 6 cm",
+  "pavimento articulado Neuquen",
+  "bloques de hormigon Neuquen",
+  "bloque P20 Neuquen",
+  "bloque mamposteria hormigon",
+  "Empresa Neuquina Ley 3338",
   "Cimalco Patagonia",
-  "Cimalco Neuquen",
+  "cimalcopatagonia",
 ];
 
 type PageMetadataInput = {
@@ -92,7 +110,7 @@ export const organizationSchema = {
   url: siteUrl,
   logo: absoluteUrl("/icon.png"),
   image: absoluteUrl(defaultOgImage),
-  email: "consultas@cimalconeuquen.com.ar",
+  email: "consultas@cimalcopatagonia.com.ar",
   telephone: "+54-299-4422656",
   foundingDate: "1947",
   description: defaultDescription,
@@ -111,7 +129,7 @@ export const organizationSchema = {
       "@type": "ContactPoint",
       contactType: "sales",
       telephone: "+54-299-4422656",
-      email: "consultas@cimalconeuquen.com.ar",
+      email: "consultas@cimalcopatagonia.com.ar",
       areaServed: "AR",
       availableLanguage: ["es"],
     },
@@ -119,7 +137,7 @@ export const organizationSchema = {
       "@type": "ContactPoint",
       contactType: "sales",
       telephone: "+54-299-4361973",
-      email: "consultas@cimalconeuquen.com.ar",
+      email: "consultas@cimalcopatagonia.com.ar",
       areaServed: "AR",
       availableLanguage: ["es"],
     },

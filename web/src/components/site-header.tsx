@@ -29,17 +29,12 @@ const navigation: NavItem[] = [
       {
         label: "Verticales",
         href: "/#verticales",
-        description: "Energia, Oil & Gas, vialidad y piezas especiales.",
+        description: "Energia, Oil & Gas, piezas industriales y proteccion de erosiones.",
       },
       {
         label: "Productos",
         href: "/#productos",
-        description: "Bloques, adoquines, postes y soluciones complementarias.",
-      },
-      {
-        label: "Clientes y referencias",
-        href: "/#referencias",
-        description: "Obra publica y privada en toda la region.",
+        description: "Bloques, adoquines, bloques HR y piezas a medida.",
       },
     ],
   },
@@ -117,9 +112,9 @@ export function SiteHeader() {
           boxShadow: "0 1px 0 rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04)",
         }}
       >
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-6 px-5 py-0 sm:px-8 lg:px-10">
-          <a href="/" aria-label="Ir al inicio" className="flex-shrink-0 py-3">
-            <div className="relative h-9 w-[160px] sm:h-10 sm:w-[176px]">
+        <div className="mx-auto flex h-[60px] w-full max-w-[1600px] items-center justify-between gap-6 px-5 sm:px-8 lg:px-10">
+          <a href="/" aria-label="Ir al inicio" className="flex-shrink-0">
+            <div className="relative h-9 w-[160px] sm:w-[176px]">
               <Image
                 src="/posibles-utilidades/Logotipo principal 4.png"
                 alt="Cimalco Patagonia"

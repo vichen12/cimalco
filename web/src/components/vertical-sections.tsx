@@ -1,272 +1,152 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
-import { ArrowRight, Factory, Pickaxe, Route, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { motion } from "motion/react";
 
 const verticals = [
   {
-    title: "Energia",
-    icon: Zap,
-    accent: "#c9f442",
-    accentFg: "#0f1a00",
-    image: "/Donde opera Cimalco/energia.png",
-    summary:
-      "Unica planta en Patagonia con capacidad para postes de alta tension. Produccion para alta, media y baja tension con obras en toda la region hasta Tierra del Fuego.",
-    items: [
-      "Postes AT, MT y BT",
-      "Unica fabrica regional AT",
-      "Cobertura hasta Tierra del Fuego",
+    brand: "Cimalco Energía",
+    shortLabel: "Energía",
+    color: "#c9f442",
+    colorFg: "#0f1a00",
+    noteFg: "#3d6000",
+    lines: [
+      {
+        title: "Líneas Eléctricas",
+        note: "Postes AT · MT · BT pretensados",
+        description:
+          "Única planta en Patagonia con capacidad para postes de alta tensión. Obras desde Neuquén hasta Tierra del Fuego.",
+        image: "/Donde opera Cimalco/energia.png",
+        href: "/catalogo#pretensados",
+      },
+      {
+        title: "Oil & Gas",
+        note: "Vaca Muerta · Ley 3338",
+        description:
+          "Cámaras, bases, sleepers y premoldeados a medida para entornos de alta exigencia operativa.",
+        image: "/Donde opera Cimalco/oil y gas .png",
+        href: "/contacto?line=Premoldeados",
+      },
     ],
-    index: "01",
-    href: "/catalogo#pretensados",
   },
   {
-    title: "Oil & Gas",
-    icon: Pickaxe,
-    accent: "#ffd239",
-    accentFg: "#1a1000",
-    image: "/Donde opera Cimalco/oil y gas .png",
-    summary:
-      "Camaras, bases, sleepers y premoldeados a medida para Vaca Muerta y entornos de alta exigencia operativa. Habilitados bajo Ley 3338.",
-    items: [
-      "Camaras y bases a medida",
-      "Sleepers para yacimiento",
-      "Ley 3338 - Habilitados",
+    brand: "Cimalco Premoldeados",
+    shortLabel: "Premoldeados",
+    color: "#41b6e1",
+    colorFg: "#001a24",
+    noteFg: "#0e6a94",
+    lines: [
+      {
+        title: "Adoquines",
+        note: "Pavimento articulado · IRAM",
+        description:
+          "Uni Stone 8 cm y Holanda 6 cm para tránsito, veredas y urbanización. Servicio de colocación incluido.",
+        image: "/Lo que fabricamos/Adoquines.jpg",
+        href: "/catalogo#industrializados",
+      },
+      {
+        title: "Bloques",
+        note: "Mampostería · Obra civil · IRAM",
+        description:
+          "Sistema completo para cerramientos y obra civil. P20, SP20, U20 y variantes según catálogo. Certificación IRAM.",
+        image: "/Lo que fabricamos/bloques.webp",
+        href: "/catalogo#industrializados",
+      },
     ],
-    index: "02",
-    href: "/contacto?line=Premoldeados",
-  },
-  {
-    title: "Vial",
-    icon: Route,
-    accent: "#41b6e1",
-    accentFg: "#001a24",
-    image: "/Donde opera Cimalco/vial.png",
-    summary:
-      "Adoquines IRAM, cordones premoldeados, divisores Jersey y losetas de ductos para obra publica y privada en toda la region.",
-    items: [
-      "Uni Stone 8 / Holanda 6 IRAM",
-      "Cordones y losetas",
-      "Municipios y desarrolladoras",
-    ],
-    index: "03",
-    href: "/catalogo#industrializados",
-  },
-  {
-    title: "Especiales",
-    icon: Factory,
-    accent: "#ffffff",
-    accentFg: "#1a1a1a",
-    image: "/Donde opera Cimalco/especiales.png",
-    summary:
-      "Shelters industriales para cromatografia, estructuras con paneles solares y piezas a medida para requerimientos fuera del catalogo estandar.",
-    items: [
-      "Shelters para Oil & Gas",
-      "Estructuras fotovoltaicas",
-      "Diseno y fabricacion a pedido",
-    ],
-    index: "04",
-    href: "/contacto?line=Premoldeados",
   },
 ];
 
 export function VerticalSections() {
-  const [active, setActive] = useState(0);
-
   return (
-    <section id="verticales" className="px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-      <div className="mx-auto w-full max-w-[1600px]">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/38">
-              Verticales
-            </p>
-            <h2 className="mt-2 font-display text-[clamp(2.2rem,4.5vw,4rem)] uppercase leading-[0.92] tracking-[0.04em] text-brand-charcoal">
-              Donde opera Cimalco.
-            </h2>
-          </div>
-          <p className="max-w-sm text-sm leading-6 text-black/46">
-            Cuatro verticales para entender rapido donde opera Cimalco y que tipo
-            de respuesta tecnica aporta en cada rubro.
-          </p>
-        </div>
+    <section id="verticales" className="px-5 py-16 sm:px-8 lg:px-10 lg:py-24">
+      <div className="mx-auto w-full max-w-[1600px] space-y-20">
 
-        <div
-          className="hidden h-[580px] overflow-hidden rounded-[28px] border border-black/8 lg:flex"
-          onMouseLeave={() => setActive(0)}
-        >
-          {verticals.map((item, i) => {
-            const isActive = active === i;
-            const Icon = item.icon;
-
-            return (
+        {verticals.map((v, vi) => (
+          <motion.div
+            key={v.brand}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.06 }}
+            transition={{ duration: 0.6, delay: vi * 0.08 }}
+          >
+            {/* Section header */}
+            <div className="mb-8 flex items-center gap-5">
               <div
-                key={item.title}
-                className="relative cursor-pointer overflow-hidden"
-                style={{
-                  flex: isActive ? "3 0 0%" : "1 0 0%",
-                  transition: "flex 0.55s cubic-bezier(0.4, 0, 0.2, 1)",
-                }}
-                onMouseEnter={() => setActive(i)}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                  style={{
-                    transition: "filter 0.55s ease, transform 0.7s ease",
-                    filter: isActive
-                      ? "brightness(0.82)"
-                      : "brightness(0.18) saturate(0.28) contrast(1.04)",
-                    transform: isActive ? "scale(1.04)" : "scale(1)",
-                  }}
-                  sizes="(max-width: 1600px) 50vw, 800px"
-                />
-
-                <div
-                  className="absolute inset-x-0 bottom-0 h-[3px]"
-                  style={{ backgroundColor: item.accent }}
-                />
-
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{
-                    opacity: isActive ? 0 : 1,
-                    transition: "opacity 0.3s ease",
-                    pointerEvents: "none",
-                  }}
+                className="h-10 w-1 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: v.color }}
+              />
+              <div>
+                <span
+                  className="inline-block rounded-full px-3 py-1 text-[9px] font-bold uppercase tracking-[0.28em]"
+                  style={{ backgroundColor: v.color, color: v.colorFg }}
                 >
-                  <div className="flex flex-col items-center gap-4">
-                    <span
-                      className="font-display text-[2.8rem] font-bold leading-none opacity-10"
-                      style={{ color: item.accent }}
-                    >
-                      {item.index}
-                    </span>
-                    <span className="[writing-mode:vertical-rl] rotate-180 font-display text-[1.05rem] uppercase tracking-[0.12em] text-white/70">
-                      {item.title}
-                    </span>
+                  {v.shortLabel}
+                </span>
+                <h3 className="mt-1.5 font-display text-[clamp(1.9rem,3.8vw,3.2rem)] uppercase leading-none tracking-[0.03em] text-brand-charcoal">
+                  {v.brand}
+                </h3>
+              </div>
+              <div className="hidden h-px flex-1 bg-black/8 lg:block" />
+            </div>
+
+            {/* Cards */}
+            <div className="grid gap-6 sm:grid-cols-2">
+              {v.lines.map((line, li) => (
+                <motion.a
+                  key={line.title}
+                  href={line.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.55, delay: vi * 0.08 + li * 0.12 }}
+                  className="group overflow-hidden rounded-[20px] border border-black/[0.07] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_44px_rgba(0,0,0,0.12)]"
+                >
+                  {/* Image */}
+                  <div className="relative overflow-hidden" style={{ height: "clamp(220px, 28vw, 360px)" }}>
+                    <Image
+                      src={line.image}
+                      alt={line.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                    {/* Bottom fade to white */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white/20 to-transparent" />
+                    {/* Color accent top bar */}
                     <div
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{ backgroundColor: item.accent }}
+                      className="absolute inset-x-0 top-0 h-[3px]"
+                      style={{ backgroundColor: v.color }}
                     />
                   </div>
-                </div>
 
-                <div
-                  className="absolute inset-0 flex flex-col justify-end p-8"
-                  style={{
-                    opacity: isActive ? 1 : 0,
-                    transition: "opacity 0.35s ease 0.1s",
-                    pointerEvents: isActive ? "auto" : "none",
-                    background:
-                      "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)",
-                  }}
-                >
-                  <div className="mb-5 flex items-center gap-3">
+                  {/* Text */}
+                  <div className="px-7 py-6">
+                    <p
+                      className="text-[9px] font-bold uppercase tracking-[0.28em]"
+                      style={{ color: v.noteFg }}
+                    >
+                      {line.note}
+                    </p>
+                    <h4 className="mt-2.5 font-display text-[1.35rem] uppercase leading-tight tracking-[0.025em] text-brand-charcoal">
+                      {line.title}
+                    </h4>
+                    <p className="mt-2.5 text-sm leading-[1.75] text-black/50">
+                      {line.description}
+                    </p>
                     <div
-                      className="flex h-9 w-9 items-center justify-center rounded-xl"
-                      style={{ backgroundColor: item.accent, color: item.accentFg }}
+                      className="mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] transition-all duration-200 group-hover:gap-3"
+                      style={{ color: v.noteFg }}
                     >
-                      <Icon className="h-4 w-4" />
+                      Ver más <ArrowRight className="h-3 w-3" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/34">
-                      {item.index}
-                    </span>
                   </div>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        ))}
 
-                  <h3
-                    className="font-display text-[clamp(2rem,3.5vw,3rem)] uppercase leading-none tracking-[0.03em]"
-                    style={{ color: item.accent }}
-                  >
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 max-w-[38ch] text-sm leading-6 text-white/60">
-                    {item.summary}
-                  </p>
-
-                  <div className="mt-5 space-y-1.5">
-                    {item.items.map((bullet) => (
-                      <div
-                        key={bullet}
-                        className="flex items-center gap-2 text-[12px] text-white/50"
-                      >
-                        <span
-                          className="h-1 w-1 flex-shrink-0 rounded-full"
-                          style={{ backgroundColor: item.accent }}
-                        />
-                        {bullet}
-                      </div>
-                    ))}
-                  </div>
-
-                  <a
-                    href={item.href}
-                    className="mt-6 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] transition hover:gap-3"
-                    style={{ color: item.accent }}
-                  >
-                    Ver mas <ArrowRight className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="grid gap-3 lg:hidden">
-          {verticals.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.title}
-                className="relative overflow-hidden rounded-[22px]"
-                style={{ minHeight: 200 }}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                  style={{ filter: "brightness(0.55)" }}
-                  sizes="100vw"
-                />
-                <div
-                  className="absolute inset-x-0 bottom-0 h-[3px]"
-                  style={{ backgroundColor: item.accent }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                <div className="relative z-10 flex h-full flex-col justify-end p-5">
-                  <div className="mb-2 flex items-center gap-2.5">
-                    <div
-                      className="flex h-7 w-7 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: item.accent, color: item.accentFg }}
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                    </div>
-                    <h3
-                      className="font-display text-[1.6rem] uppercase leading-none tracking-[0.03em]"
-                      style={{ color: item.accent }}
-                    >
-                      {item.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm leading-6 text-white/60">{item.summary}</p>
-                  <a
-                    href={item.href}
-                    className="mt-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em]"
-                    style={{ color: item.accent }}
-                  >
-                    Ver mas <ArrowRight className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </section>
   );
