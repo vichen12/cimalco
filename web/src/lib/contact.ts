@@ -6,11 +6,16 @@ export const contactWhatsappPhone =
 export const contactWorksheetName = "Consultas";
 
 export const contactInterestOptions = [
-  "Premoldeados industrializados",
-  "Pretensados",
-  "Premoldeados",
-  "Servicios",
-  "Consulta general",
+  "Postes / Energía",
+  "Oil & Gas",
+  "Base AIB",
+  "Cámaras / Sleepers / Fundaciones",
+  "Protección de erosiones / HR",
+  "Bloques",
+  "Adoquines",
+  "Colocación de adoquines",
+  "Pieza bajo plano",
+  "Otro",
 ] as const;
 
 const optionalText = z
@@ -23,23 +28,30 @@ export const contactObraOptions = [
   "Vial / infraestructura",
   "Urbanismo / municipal",
   "Oil & Gas",
-  "Energia",
+  "Energía",
   "Industrial",
   "Residencial / privado",
   "Otro",
 ] as const;
 
 export const contactSubmissionSchema = z.object({
-  name: z.string().trim().min(2, "Escribi tu nombre"),
-  email: z.string().trim().email("Escribi un email valido"),
+  name: z.string().trim().min(2, "Escribí tu nombre"),
+  email: z.string().trim().email("Escribí un email válido"),
   phone: optionalText,
-  company: z.string().trim().min(2, "Escribi tu empresa o rubro"),
+  company: z.string().trim().min(2, "Escribí tu empresa o rubro"),
+  cargo: optionalText,
   interests: z
     .array(z.string().trim())
-    .min(1, "Selecciona al menos una linea"),
+    .min(1, "Seleccioná al menos una línea de interés"),
   obra: optionalText,
   zone: optionalText,
-  message: z.string().trim().min(12, "Contanos un poco mas"),
+  localidad: optionalText,
+  provincia: optionalText,
+  volumen: optionalText,
+  fecha: optionalText,
+  entrega: z.boolean().optional().default(false),
+  colocacion: z.boolean().optional().default(false),
+  message: z.string().trim().min(12, "Contanos un poco más"),
   line: optionalText,
   group: optionalText,
   item: optionalText,
@@ -53,9 +65,9 @@ export type QuickWhatsappSubmission = {
   timing: string;
 };
 
-function pushIfValue(lines: string[], label: string, value: string) {
-  if (value) {
-    lines.push(`${label}: ${value}`);
+function pushIfValue(lines: string[], label: string, value: string | boolean | undefined) {
+  if (value !== undefined && value !== "" && value !== false) {
+    lines.push(`${label}: ${value === true ? "Sí" : value}`);
   }
 }
 
@@ -84,11 +96,18 @@ export function buildContactPlainText(payload: ContactSubmission) {
     `Nombre: ${payload.name}`,
     `Email: ${payload.email}`,
     `Empresa o rubro: ${payload.company}`,
-    `Lineas de interes: ${formatContactInterests(payload.interests)}`,
+    `Líneas de interés: ${formatContactInterests(payload.interests)}`,
   ];
 
-  pushIfValue(lines, "Telefono", payload.phone);
-  pushIfValue(lines, "Linea preseleccionada", payload.line);
+  pushIfValue(lines, "Teléfono", payload.phone);
+  pushIfValue(lines, "Cargo", payload.cargo);
+  pushIfValue(lines, "Localidad", payload.localidad);
+  pushIfValue(lines, "Provincia", payload.provincia);
+  pushIfValue(lines, "Volumen estimado", payload.volumen);
+  pushIfValue(lines, "Fecha estimada", payload.fecha);
+  pushIfValue(lines, "Requiere entrega", payload.entrega);
+  pushIfValue(lines, "Requiere colocación / montaje", payload.colocacion);
+  pushIfValue(lines, "Línea preseleccionada", payload.line);
   pushIfValue(lines, "Grupo preseleccionado", payload.group);
   pushIfValue(lines, "Item preseleccionado", payload.item);
 
@@ -105,14 +124,35 @@ export function buildContactHtml(payload: ContactSubmission) {
     `<p><strong>Nombre:</strong> ${escapeHtml(payload.name)}</p>`,
     `<p><strong>Email:</strong> ${escapeHtml(payload.email)}</p>`,
     payload.phone
-      ? `<p><strong>Telefono:</strong> ${escapeHtml(payload.phone)}</p>`
+      ? `<p><strong>Teléfono:</strong> ${escapeHtml(payload.phone)}</p>`
       : "",
     `<p><strong>Empresa o rubro:</strong> ${escapeHtml(payload.company)}</p>`,
-    `<p><strong>Lineas de interes:</strong> ${escapeHtml(
+    payload.cargo
+      ? `<p><strong>Cargo:</strong> ${escapeHtml(payload.cargo)}</p>`
+      : "",
+    `<p><strong>Líneas de interés:</strong> ${escapeHtml(
       formatContactInterests(payload.interests),
     )}</p>`,
+    payload.localidad
+      ? `<p><strong>Localidad:</strong> ${escapeHtml(payload.localidad)}</p>`
+      : "",
+    payload.provincia
+      ? `<p><strong>Provincia:</strong> ${escapeHtml(payload.provincia)}</p>`
+      : "",
+    payload.volumen
+      ? `<p><strong>Volumen estimado:</strong> ${escapeHtml(payload.volumen)}</p>`
+      : "",
+    payload.fecha
+      ? `<p><strong>Fecha estimada:</strong> ${escapeHtml(payload.fecha)}</p>`
+      : "",
+    payload.entrega
+      ? `<p><strong>Requiere entrega:</strong> Sí</p>`
+      : "",
+    payload.colocacion
+      ? `<p><strong>Requiere colocación / montaje:</strong> Sí</p>`
+      : "",
     payload.line
-      ? `<p><strong>Linea preseleccionada:</strong> ${escapeHtml(payload.line)}</p>`
+      ? `<p><strong>Línea preseleccionada:</strong> ${escapeHtml(payload.line)}</p>`
       : "",
     payload.group
       ? `<p><strong>Grupo preseleccionado:</strong> ${escapeHtml(payload.group)}</p>`
@@ -131,17 +171,24 @@ export function buildContactHtml(payload: ContactSubmission) {
 
 export function buildWhatsappMessage(payload: ContactSubmission) {
   const lines = [
-    "Hola Cimalco, envio una consulta desde la web.",
+    "Hola Cimalco, envío una consulta desde la web.",
     "",
     `Nombre: ${payload.name}`,
     `Empresa: ${payload.company}`,
     `Email: ${payload.email}`,
   ];
 
-  pushIfValue(lines, "Telefono", payload.phone);
-  lines.push(`Lineas de interes: ${formatContactInterests(payload.interests)}`);
+  pushIfValue(lines, "Teléfono", payload.phone);
+  pushIfValue(lines, "Cargo", payload.cargo);
+  lines.push(`Líneas de interés: ${formatContactInterests(payload.interests)}`);
   pushIfValue(lines, "Tipo de obra", payload.obra);
+  pushIfValue(lines, "Localidad", payload.localidad);
+  pushIfValue(lines, "Provincia", payload.provincia);
   pushIfValue(lines, "Zona de entrega", payload.zone);
+  pushIfValue(lines, "Volumen estimado", payload.volumen);
+  pushIfValue(lines, "Fecha estimada", payload.fecha);
+  pushIfValue(lines, "Requiere entrega", payload.entrega);
+  pushIfValue(lines, "Requiere colocación / montaje", payload.colocacion);
   pushIfValue(lines, "Grupo", payload.group);
   pushIfValue(lines, "Item", payload.item);
   lines.push("");
@@ -159,7 +206,7 @@ export function buildQuickWhatsappMessage(payload: QuickWhatsappSubmission) {
   return [
     "Hola Cimalco, quiero hacer una consulta express desde la web.",
     "",
-    `Linea de interes: ${payload.interest}`,
+    `Línea de interés: ${payload.interest}`,
     `Necesito: ${payload.request}`,
     `Plazo estimado: ${payload.timing}`,
   ].join("\n");
@@ -177,7 +224,14 @@ export function buildWorkbookRow(payload: ContactSubmission, createdAt: string) 
     Email: payload.email,
     Telefono: payload.phone,
     Empresa: payload.company,
+    Cargo: payload.cargo,
     Intereses: formatContactInterests(payload.interests),
+    Localidad: payload.localidad,
+    Provincia: payload.provincia,
+    Volumen: payload.volumen,
+    Fecha_estimada: payload.fecha,
+    Requiere_entrega: payload.entrega ? "Sí" : "",
+    Requiere_colocacion: payload.colocacion ? "Sí" : "",
     LineaPreseleccionada: payload.line,
     GrupoPreseleccionado: payload.group,
     ItemPreseleccionado: payload.item,
@@ -192,7 +246,14 @@ export const contactSheetHeaders = [
   "Email",
   "Telefono",
   "Empresa",
+  "Cargo",
   "Intereses",
+  "Localidad",
+  "Provincia",
+  "Volumen",
+  "Fecha_estimada",
+  "Requiere_entrega",
+  "Requiere_colocacion",
   "LineaPreseleccionada",
   "GrupoPreseleccionado",
   "ItemPreseleccionado",
@@ -212,7 +273,14 @@ export function buildSheetRowValues(
     row.Email,
     row.Telefono,
     row.Empresa,
+    row.Cargo,
     row.Intereses,
+    row.Localidad,
+    row.Provincia,
+    row.Volumen,
+    row.Fecha_estimada,
+    row.Requiere_entrega,
+    row.Requiere_colocacion,
     row.LineaPreseleccionada,
     row.GrupoPreseleccionado,
     row.ItemPreseleccionado,

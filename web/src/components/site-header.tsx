@@ -19,22 +19,62 @@ type NavItem =
 
 const navigation: NavItem[] = [
   {
-    label: "Empresa",
+    label: "Cimalco",
+    href: "/cimalco",
     children: [
       {
-        label: "Por que Cimalco",
-        href: "/#empresa",
-        description: "Logistica directa, calidad certificada y respuesta rapida.",
+        label: "¿Por qué Cimalco?",
+        href: "/cimalco",
+        description: "Más de seis décadas fabricando en Patagonia. Logística directa y calidad certificada.",
       },
       {
-        label: "Verticales",
-        href: "/#verticales",
-        description: "Energia, Oil & Gas, piezas industriales y proteccion de erosiones.",
+        label: "Planta industrial",
+        href: "/cimalco#planta",
+        description: "Planta propia de 26.000 m² en el Parque Industrial Neuquén Oeste.",
       },
       {
-        label: "Productos",
-        href: "/#productos",
-        description: "Bloques, adoquines, bloques HR y piezas a medida.",
+        label: "Certificaciones",
+        href: "/cimalco#certificaciones",
+        description: "IRAM en bloques y adoquines. Ley 3338 para Oil & Gas.",
+      },
+    ],
+  },
+  {
+    label: "Catálogo",
+    href: "/catalogo",
+    children: [
+      {
+        groupLabel: "Energía",
+        label: "Postes pretensados",
+        href: "/catalogo#postes",
+        description: "Columnas para tendidos eléctricos de alta, media y baja tensión.",
+      },
+      {
+        label: "Bases AIB y cámaras",
+        href: "/catalogo#oil-gas",
+        description: "Premoldeados para Oil & Gas y yacimiento.",
+      },
+      {
+        groupLabel: "Prefabricados",
+        label: "Bloques de hormigón",
+        href: "/catalogo#bloques",
+        description: "P20, SP20, U20, P10 y líneas de mampostería.",
+      },
+      {
+        label: "Adoquines",
+        href: "/catalogo#adoquines",
+        description: "Uni Stone 8 cm, Holanda 6 cm y pavimento articulado.",
+      },
+      {
+        groupLabel: "Sistemas especiales",
+        label: "Bloques HR",
+        href: "/catalogo#hr",
+        description: "Protección de erosiones para infraestructura expuesta.",
+      },
+      {
+        label: "Piezas a medida",
+        href: "/catalogo#piezas-medida",
+        description: "Desarrollo bajo plano para requerimientos específicos.",
       },
     ],
   },
@@ -48,42 +88,14 @@ const navigation: NavItem[] = [
         description: "Proyectos industriales e infraestructura de gran escala.",
       },
       {
-        label: "Colocacion de adoquines",
+        label: "Colocación de adoquines",
         href: "/servicios#adoquines",
-        description: "Zonas de alto transito y urbanismo funcional.",
+        description: "Zonas de alto tránsito y urbanismo funcional.",
       },
       {
-        label: "Construccion de cercos",
-        href: "/servicios#cercos",
-        description: "Seguridad para industrias y residencias.",
-      },
-    ],
-  },
-  {
-    label: "Catalogo",
-    href: "/catalogo",
-    children: [
-      {
-        groupLabel: "Premoldeados industrializados",
-        label: "Bloquera y pavimentos",
-        href: "/catalogo#industrializados",
-        description: "Bloques y adoquines de produccion estandarizada.",
-      },
-      {
-        label: "Revestimientos",
-        href: "/catalogo#industrializados",
-        description: "Canales aluvionales y obras hidraulicas.",
-      },
-      {
-        groupLabel: "Otras lineas",
-        label: "Pretensados",
-        href: "/catalogo#pretensados",
-        description: "Columnas para tendidos electricos.",
-      },
-      {
-        label: "Premoldeados",
-        href: "/catalogo#premoldeados",
-        description: "Bases, bodegas y camaras tipicas.",
+        label: "Cerramientos premoldeados",
+        href: "/servicios#cerramientos",
+        description: "Soluciones de cerramiento en hormigón premoldeado.",
       },
     ],
   },
@@ -94,6 +106,7 @@ function isActiveLink(pathname: string, href: string) {
   if (href.startsWith("/#")) return pathname === "/";
   if (href.startsWith("/catalogo")) return pathname.startsWith("/catalogo");
   if (href.startsWith("/servicios")) return pathname.startsWith("/servicios");
+  if (href.startsWith("/cimalco")) return pathname.startsWith("/cimalco");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -133,6 +146,8 @@ export function SiteHeader() {
                   ? isActiveLink(pathname, item.href)
                   : pathname === "/";
 
+                const dropdownWidth = item.label === "Catálogo técnico" ? "400px" : "320px";
+
                 return (
                   <div
                     key={item.label}
@@ -165,11 +180,12 @@ export function SiteHeader() {
                     </a>
 
                     <div
-                      className={`absolute left-1/2 top-full w-[320px] -translate-x-1/2 pt-2 transition-all duration-200 ${
+                      className={`absolute left-1/2 top-full -translate-x-1/2 pt-2 transition-all duration-200 ${
                         isOpen
                           ? "pointer-events-auto translate-y-0 opacity-100"
                           : "pointer-events-none translate-y-2 opacity-0"
                       }`}
+                      style={{ width: dropdownWidth }}
                     >
                       <div className="overflow-hidden rounded-[18px] border border-black/[0.07] bg-white p-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.14)]">
                         {item.children.map((child, idx) => {
@@ -237,17 +253,17 @@ export function SiteHeader() {
 
           <div className="flex items-center gap-3">
             <a
-              href="/contacto#contacto"
+              href="/contacto"
               className="hidden items-center gap-2 rounded-full bg-brand-yellow px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-[#1a1000] shadow-[0_4px_14px_rgba(255,210,57,0.32)] transition hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(255,210,57,0.4)] lg:inline-flex"
             >
-              Contactanos
+              Contacto
             </a>
 
             <Dialog.Root>
               <Dialog.Trigger asChild>
                 <button
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-brand-charcoal shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition hover:border-black/18 lg:hidden"
-                  aria-label="Abrir menu"
+                  aria-label="Abrir menú"
                 >
                   <Menu className="h-5 w-5" />
                 </button>
@@ -255,7 +271,7 @@ export function SiteHeader() {
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
                 <Dialog.Content className="fixed inset-x-3 top-3 z-50 rounded-[24px] border border-black/8 bg-white shadow-[0_24px_60px_rgba(0,0,0,0.16)] sm:left-auto sm:right-5 sm:top-4 sm:w-[320px]">
-                  <Dialog.Title className="sr-only">Menu de navegacion</Dialog.Title>
+                  <Dialog.Title className="sr-only">Menú de navegación</Dialog.Title>
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="relative h-7 w-[130px]">
@@ -269,7 +285,7 @@ export function SiteHeader() {
                       <Dialog.Close asChild>
                         <button
                           className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-black/10 text-black/50 transition hover:text-brand-charcoal"
-                          aria-label="Cerrar menu"
+                          aria-label="Cerrar menú"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -278,9 +294,9 @@ export function SiteHeader() {
 
                     <nav className="space-y-1">
                       {[
-                        { label: "Empresa", href: "/" },
+                        { label: "Cimalco", href: "/cimalco" },
+                        { label: "Catálogo técnico", href: "/catalogo" },
                         { label: "Servicios", href: "/servicios" },
-                        { label: "Catalogo", href: "/catalogo" },
                         { label: "Contacto", href: "/contacto" },
                       ].map((item) => {
                         const active = isActiveLink(pathname, item.href);
@@ -304,10 +320,10 @@ export function SiteHeader() {
 
                     <Dialog.Close asChild>
                       <a
-                        href="/contacto#contacto"
+                        href="/contacto"
                         className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-yellow py-3.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#1a1000] shadow-[0_4px_14px_rgba(255,210,57,0.32)] transition hover:brightness-95"
                       >
-                        Contactanos
+                        Solicitar consulta técnica
                       </a>
                     </Dialog.Close>
                   </div>

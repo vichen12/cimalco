@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ArrowRight, ShieldCheck, Settings } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { absoluteUrl, createPageMetadata, legalName } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Servicios especializados",
+  title: "Servicios — Montaje de premoldeados y colocación de adoquines",
   description:
-    "Servicios externos y especializados para montaje de premoldeados, colocacion de adoquines y construccion de cercos perimetrales en Neuquen y Patagonia.",
+    "Servicios especializados de montaje de premoldeados, colocación de adoquines y cerramientos premoldeados para obras en Neuquén y Patagonia.",
   path: "/servicios",
   image: "/fotos servicios/herobg.png",
   keywords: [
     "montaje de premoldeados",
-    "colocacion de adoquines",
-    "cercos perimetrales",
+    "colocación de adoquines",
+    "cerramientos premoldeados",
     "servicios para Oil & Gas",
-    "servicios de obra Neuquen",
+    "servicios de obra Neuquén",
   ],
 });
 
@@ -27,44 +27,31 @@ const specializedServices = [
     num: "01",
     title: "Montaje de premoldeados",
     description:
-      "Instalacion y puesta en obra de elementos premoldeados para proyectos industriales, viales e infraestructura de gran escala. Coordinamos logistica, equipos y criterio tecnico en cada etapa.",
+      "Instalación y puesta en obra de elementos premoldeados para proyectos industriales, viales e infraestructura de gran escala. Coordinamos logística, equipos y criterio técnico en cada etapa.",
     image: "/fotos servicios/herobg.png",
     href: "/contacto?line=Servicios&item=Montaje+de+premoldeados",
   },
   {
     id: "adoquines",
     num: "02",
-    title: "Colocacion de adoquines",
+    title: "Colocación de adoquines",
     description:
-      "Especialistas en pavimentacion con adoquines de hormigon para zonas de alto transito, urbanismo funcional, playas de maniobras y proyectos municipales.",
+      "Especialistas en pavimentación con adoquines de hormigón para zonas de alto tránsito, urbanismo funcional, playas de maniobras y proyectos municipales.",
     image: "/fotos servicios/image copy.png",
     href: "/contacto?line=Servicios&item=Colocacion+de+adoquines",
   },
   {
-    id: "cercos",
+    id: "cerramientos",
     num: "03",
-    title: "Construccion de cercos perimetrales",
+    title: "Cerramientos premoldeados",
     description:
-      "Soluciones estructurales de cerramiento para industrias, plantas, predios y residencias, con materiales durables y ejecucion prolija.",
+      "Soluciones de cerramiento en hormigón premoldeado para industrias, plantas, predios y proyectos que requieran durabilidad y ejecución prolija.",
     image: "/fotos servicios/image copy 2.png",
-    href: "/contacto?line=Servicios&item=Construccion+de+cercos",
+    href: "/contacto?line=Servicios&item=Cerramientos+premoldeados",
   },
 ];
 
-const benefits = [
-  {
-    icon: Settings,
-    title: "Adaptabilidad",
-    description:
-      "Armamos el servicio segun el contexto del proyecto, el tipo de montaje y la necesidad real del cliente. No bajamos una oferta generica.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Calidad garantizada",
-    description:
-      "Materiales de fabricacion propia con control tecnico en planta, mas tecnicas de obra modernas para resultados duraderos.",
-  },
-];
+
 
 export default function ServiciosPage() {
   const servicesSchema = {
@@ -79,7 +66,7 @@ export default function ServiciosPage() {
     areaServed: "Patagonia, Argentina",
     serviceType: specializedServices.map((service) => service.title),
     description:
-      "Montaje de premoldeados, colocacion de adoquines y construccion de cercos perimetrales para industria, urbanismo y Oil & Gas.",
+      "Montaje de premoldeados, colocación de adoquines y cerramientos premoldeados para industria, urbanismo y Oil & Gas.",
     url: absoluteUrl("/servicios"),
   };
 
@@ -131,12 +118,12 @@ export default function ServiciosPage() {
               Servicios externos
             </p>
             <h1 className="mt-2 max-w-[14ch] font-display text-[clamp(2.4rem,5vw,5rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
-              Montaje, colocacion
+              Montaje, colocación
               <span className="block text-brand-yellow">y cerramientos.</span>
             </h1>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
               Servicios especializados para obras de cualquier escala en Patagonia.
-              Equipos propios, materiales de planta y criterio tecnico en cada etapa.
+              Equipos propios, materiales de planta y criterio técnico en cada etapa.
             </p>
             <div className="mt-8">
               <Button
@@ -255,53 +242,6 @@ export default function ServiciosPage() {
           </div>
         </section>
 
-        {/* Beneficios */}
-        <section className="mt-14">
-          <div className="mb-10 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-black/34">
-                Beneficios destacados
-              </p>
-              <h2 className="mt-2 font-display text-[clamp(1.8rem,3.5vw,3rem)] uppercase leading-[0.94] tracking-[0.04em] text-brand-charcoal">
-                Por que trabajar
-                <span className="block text-brand-yellow">con Cimalco.</span>
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            {benefits.map((benefit, i) => {
-              const Icon = benefit.icon;
-              const colors = [
-                { bg: "#ffd239", fg: "#1a1000", light: "rgba(255,210,57,0.10)" },
-                { bg: "#41b6e1", fg: "#001a24", light: "rgba(65,182,225,0.10)" },
-              ];
-              const c = colors[i % colors.length];
-              return (
-                <article
-                  key={benefit.title}
-                  className="relative flex flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
-                >
-                  <div className="h-[5px]" style={{ backgroundColor: c.bg }} />
-                  <div className="flex gap-5 p-7 lg:p-8">
-                    <div
-                      className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl"
-                      style={{ backgroundColor: c.light }}
-                    >
-                      <Icon className="h-5 w-5" style={{ color: c.fg === "#001a24" ? "#0e6a94" : "#8a6800" }} />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-[clamp(1.3rem,2vw,1.6rem)] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
-                        {benefit.title}
-                      </h3>
-                      <p className="mt-3 text-sm leading-7 text-black/54">{benefit.description}</p>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
       </main>
 
       <SiteFooter />

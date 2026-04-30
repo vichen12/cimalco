@@ -8,17 +8,19 @@ import { VerticalSections } from "@/components/vertical-sections";
 import { absoluteUrl, createPageMetadata, legalName, siteName } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Premoldeados y pretensados de hormigon en Neuquen",
+  title: "Fábrica de premoldeados y pretensados de hormigón en Neuquén | Cimalco Patagonia",
   description:
-    "Fabricacion de premoldeados y pretensados de hormigon para energia, Oil & Gas, vialidad e infraestructura en Neuquen y toda la Patagonia.",
+    "Cimalco Patagonia: fábrica de premoldeados y pretensados de hormigón en Neuquén. Postes para líneas eléctricas AT/MT/BT, premoldeados para Oil & Gas en Vaca Muerta, bloques y adoquines IRAM. Planta propia 26.000 m² — venta directa.",
   path: "/",
   image: "/site-assets/premoldeados-de-hormigon.jpg",
   keywords: [
-    "premoldeados de hormigon",
-    "pretensados de hormigon",
-    "postes de alta tension",
-    "Oil & Gas Neuquen",
-    "infraestructura Patagonia",
+    "fábrica premoldeados hormigón Neuquén",
+    "premoldeados y pretensados hormigón",
+    "postes pretensados baja media alta tensión",
+    "premoldeados Oil Gas Vaca Muerta",
+    "bloques adoquines IRAM Neuquén",
+    "venta directa hormigón Neuquén",
+    "planta propia Neuquén 26000 m2",
   ],
 });
 

@@ -4,18 +4,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { ArrowRight, X, ZoomIn } from "lucide-react";
 import type { PremoldeadoTipico } from "@/data/catalogo-2025";
-import { buildContactHref } from "@/lib/contact-prefill";
+import { buildWhatsAppHref } from "@/lib/contact-prefill";
 import { Button } from "@/components/ui/button";
 
 const MODAL_INFO_BG =
   "repeating-linear-gradient(-45deg, transparent 0px, transparent 16px, rgba(0,0,0,0.016) 16px, rgba(0,0,0,0.016) 17px), linear-gradient(160deg, #fffdf0 0%, #fff8d6 100%)";
 
 export function CatalogPremoldeadoCard({ item, accentColor = "#ffd239", accentFg = "#201708" }: { item: PremoldeadoTipico; accentColor?: string; accentFg?: string }) {
-  const contactHref = buildContactHref({
-    line: "Premoldeados",
-    group: "Premoldeados tipicos",
-    item: item.title,
-  });
+  const contactHref = buildWhatsAppHref(item.title);
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white/84 shadow-[0_12px_32px_rgba(0,0,0,0.06)]">
@@ -63,6 +59,8 @@ export function CatalogPremoldeadoCard({ item, accentColor = "#ffd239", accentFg
                     <Dialog.Close asChild>
                       <Button
                         href={contactHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         variant="accent"
                         className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
                         style={{ backgroundColor: accentColor, color: accentFg }}
@@ -90,6 +88,8 @@ export function CatalogPremoldeadoCard({ item, accentColor = "#ffd239", accentFg
         <div className="mt-auto pt-5">
           <Button
             href={contactHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
             variant="accent"
             className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
             style={{ backgroundColor: accentColor, color: accentFg }}

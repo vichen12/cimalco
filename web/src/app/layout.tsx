@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: siteName,
   title: {
-    default: "Premoldeados y pretensados de hormigon en Neuquen",
+    default: "Cimalco Patagonia | Premoldeados, postes pretensados y adoquines en Neuquén",
     template: "%s | Cimalco Patagonia",
   },
   description: defaultDescription,

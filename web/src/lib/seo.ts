@@ -2,40 +2,87 @@ import type { Metadata } from "next";
 
 export const siteUrl = "https://www.cimalcopatagonia.com.ar";
 export const siteName = "Cimalco Patagonia";
-export const legalName = "Cimalco Neuquen S.A.";
+export const legalName = "Cimalco Neuquén S.A.";
 export const defaultOgImage = "/site-assets/premoldeados-de-hormigon.jpg";
 export const defaultDescription =
-  "Premoldeados y pretensados de hormigon para energia, Oil & Gas, vialidad e infraestructura en Neuquen y toda la Patagonia.";
+  "Fábrica de premoldeados y pretensados de hormigón en Neuquén. Postes para líneas eléctricas AT/MT/BT, premoldeados para Oil & Gas en Vaca Muerta, bloques y adoquines IRAM. Planta propia de 26.000 m² — venta directa en Patagonia.";
 
 export const defaultKeywords = [
-  "premoldeados Neuquen",
-  "premoldeados Patagonia",
-  "fabricante premoldeados Neuquen",
-  "hormigon premoldeado Patagonia",
-  "postes de hormigon pretensado Neuquen",
-  "postes de alta tension Patagonia",
-  "postes pretensados Patagonia",
-  "lineas electricas Patagonia",
-  "premoldeados Vaca Muerta",
-  "premoldeados Oil and Gas Neuquen",
-  "piezas industriales hormigon Oil Gas",
-  "base para equipos AIB",
-  "base AIB Oil Gas Neuquen",
-  "camaras de valvulas premoldeadas",
-  "sleepers premoldeados",
-  "bloques HR proteccion de erosiones",
-  "proteccion de taludes hormigon",
-  "sistema proteccion hidraulica hormigon",
-  "adoquines Neuquen",
-  "adoquin Uni Stone 8 cm",
-  "adoquin Holanda 6 cm",
-  "pavimento articulado Neuquen",
-  "bloques de hormigon Neuquen",
-  "bloque P20 Neuquen",
-  "bloque mamposteria hormigon",
-  "Empresa Neuquina Ley 3338",
+  // Marca
   "Cimalco Patagonia",
+  "Cimalco Neuquén",
   "cimalcopatagonia",
+
+  // Genérico industrial
+  "fábrica de premoldeados Neuquén",
+  "premoldeados de hormigón Neuquén",
+  "premoldeados y pretensados de hormigón",
+  "pretensados de hormigón Neuquén",
+  "hormigón industrial Patagonia",
+  "fabricante premoldeados Patagonia",
+  "premoldeados Patagonia",
+  "planta industrial Neuquén",
+  "venta directa premoldeados Neuquén",
+
+  // Energía / postes
+  "postes pretensados Patagonia",
+  "postes de hormigón Neuquén",
+  "postes de hormigón pretensado",
+  "postes para líneas eléctricas",
+  "postes de alta tensión Patagonia",
+  "postes media tensión Neuquén",
+  "postes baja tensión Neuquén",
+  "infraestructura eléctrica Patagonia",
+  "columnas de hormigón armado",
+
+  // Oil & Gas / Vaca Muerta
+  "premoldeados Oil & Gas",
+  "premoldeados Oil y Gas Neuquén",
+  "premoldeados Vaca Muerta",
+  "bases AIB Vaca Muerta",
+  "bases premoldeadas yacimiento",
+  "sleepers de hormigón Oil & Gas",
+  "cámaras premoldeadas Oil & Gas",
+  "fundaciones premoldeadas Neuquén",
+  "piezas bajo plano Oil & Gas",
+  "Ley 3338 Oil & Gas Neuquén",
+  "Empresa Neuquina Ley 3338",
+
+  // Bloques
+  "bloques de hormigón Neuquén",
+  "bloques de cemento Neuquén",
+  "bloques de hormigón Patagonia",
+  "bloques de hormigón Alto Valle",
+  "bloque P20 Neuquén",
+  "venta de bloques Neuquén",
+  "bloques IRAM",
+  "bloques hormigón IRAM",
+  "mampostería hormigón Neuquén",
+
+  // Adoquines
+  "adoquines de hormigón Neuquén",
+  "adoquines de hormigón Patagonia",
+  "adoquines de hormigón Alto Valle",
+  "pavimento articulado Neuquén",
+  "pavimento articulado Patagonia",
+  "adoquín Uni Stone 8 cm",
+  "adoquín Holanda 6 cm",
+  "venta de adoquines Neuquén",
+  "adoquines IRAM",
+  "adoquines para tránsito liviano",
+  "colocación de adoquines Neuquén",
+
+  // Protección erosiones
+  "bloques HR",
+  "protección de erosiones Neuquén",
+  "protección de taludes hormigón",
+  "sistema protección hidráulica hormigón",
+  "revestimiento de canales hormigón",
+
+  // Geo — Patagonia
+  "premoldeados Alto Valle",
+  "hormigón Neuquén capital",
+  "premoldeados para obras en Patagonia",
 ];
 
 type PageMetadataInput = {
@@ -112,18 +159,23 @@ export const organizationSchema = {
   image: absoluteUrl(defaultOgImage),
   email: "consultas@cimalcopatagonia.com.ar",
   telephone: "+54-299-4422656",
-  foundingDate: "1947",
   description: defaultDescription,
   address: {
     "@type": "PostalAddress",
     streetAddress:
-      "ENET n. 1 2089, Esq. Ing. Huergo - Parque Industrial Neuquen Oeste",
-    addressLocality: "Neuquen",
-    addressRegion: "Neuquen",
+      "ENET n. 1 2089, Esq. Ing. Huergo — Parque Industrial Neuquén Oeste",
+    addressLocality: "Neuquén",
+    addressRegion: "Neuquén",
     postalCode: "8300",
     addressCountry: "AR",
   },
-  areaServed: "Patagonia, Argentina",
+  areaServed: [
+    "Neuquén, Argentina",
+    "Patagonia, Argentina",
+    "Vaca Muerta, Neuquén",
+    "Alto Valle, Río Negro",
+    "Argentina",
+  ],
   contactPoint: [
     {
       "@type": "ContactPoint",
@@ -143,11 +195,16 @@ export const organizationSchema = {
     },
   ],
   knowsAbout: [
-    "Premoldeados de hormigon",
-    "Pretensados de hormigon",
-    "Postes de hormigon",
-    "Adoquines y pavimentos",
-    "Infraestructura para Oil & Gas",
+    "Premoldeados de hormigón",
+    "Pretensados de hormigón",
+    "Postes de hormigón pretensado para líneas eléctricas AT MT BT",
+    "Premoldeados para Oil & Gas Vaca Muerta",
+    "Bases AIB sleepers cámaras para yacimiento",
+    "Adoquines y pavimento articulado IRAM",
+    "Bloques de hormigón IRAM",
+    "Protección de erosiones bloques HR",
+    "Fabricación bajo plano hormigón",
+    "Ley 3338 empresa neuquina",
   ],
 };
 
@@ -163,3 +220,6 @@ export const websiteSchema = {
   },
   description: defaultDescription,
 };
+
+
+

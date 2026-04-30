@@ -1,3 +1,5 @@
+import { contactWhatsappPhone } from "@/lib/contact";
+
 type ContactPrefillParams = {
   line: string;
   group?: string;
@@ -30,4 +32,9 @@ export function buildContactHref({
   );
 
   return `/contacto?${params.toString()}#contacto`;
+}
+
+export function buildWhatsAppHref(productName: string): string {
+  const text = `Hola, me interesó el producto *${productName}* de Cimalco Patagonia. ¿Me pueden dar más información?`;
+  return `https://wa.me/${contactWhatsappPhone}?text=${encodeURIComponent(text)}`;
 }

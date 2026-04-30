@@ -47,18 +47,23 @@ export const catalogDownloadHref =
 export const catalogSections = [
   {
     id: "industrializados",
-    title: "Premoldeados industrializados",
-    description: "Bloques, adoquines y revestimientos.",
+    title: "Bloques y adoquines",
+    description: "Bloques para mampostería y adoquines de pavimento articulado. Norma IRAM.",
+  },
+  {
+    id: "oil-gas",
+    title: "Oil & Gas",
+    description: "Bases AIB, sleepers, cámaras y piezas bajo plano. Ley 3338.",
+  },
+  {
+    id: "hr",
+    title: "Protección de erosiones",
+    description: "Bloques HR para canales, taludes y obras hidráulicas.",
   },
   {
     id: "pretensados",
-    title: "Pretensados",
-    description: "Columnas y piezas para tendidos electricos.",
-  },
-  {
-    id: "premoldeados",
-    title: "Premoldeados",
-    description: "Bases, bodegas de pozo y camaras de inspeccion.",
+    title: "Postes pretensados",
+    description: "Columnas y piezas para tendidos eléctricos. Única planta patagónica.",
   },
 ];
 
@@ -107,7 +112,7 @@ export const bloqueraProducts: CatalogProduct[] = [
       { label: "Cantidad x m2", value: "25" },
       { label: "Cantidad x pallet", value: "180" },
     ],
-    note: "La carpeta 2025 no incluye una imagen separada para M20, por eso se referencia la linea base.",
+    note: "Imagen referencial de línea. Consultar disponibilidad y terminaciones.",
   },
   {
     title: "Bloque splitado",

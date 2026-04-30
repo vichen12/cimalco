@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Building2, Clock3, ShieldCheck, Zap } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -9,14 +9,13 @@ import { absoluteUrl, createPageMetadata, legalName } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Contacto comercial",
   description:
-    "Contactate con Cimalco Patagonia por premoldeados, postes pretensados, adoquines y proyectos especiales en Neuquen y Patagonia.",
+    "Contactate con Cimalco Patagonia por premoldeados, postes pretensados, adoquines y proyectos especiales en Neuquén y Patagonia.",
   path: "/contacto",
-  image: "/foto contacto.png",
   keywords: [
     "contacto Cimalco",
     "consultas premoldeados",
-    "contacto adoquines Neuquen",
-    "contacto postes de hormigon",
+    "contacto adoquines Neuquén",
+    "contacto postes de hormigón",
   ],
 });
 
@@ -29,62 +28,16 @@ function resolveSearchParam(value: string | string[] | undefined) {
   return value ?? "";
 }
 
-const trustItems = [
-  {
-    icon: Clock3,
-    label: "Respuesta comercial",
-    value: "Menos de 24 hs desde la planta",
-  },
-  {
-    icon: Building2,
-    label: "Planta propia",
-    value: "Parque Industrial Neuquen Oeste",
-  },
-  {
-    icon: ShieldCheck,
-    label: "Control de calidad",
-    value: "Fabricacion con referencia IRAM",
-  },
-  {
-    icon: Zap,
-    label: "Venta directa",
-    value: "Sin intermediarios, desde fabrica",
-  },
-];
 
-const tipItems = [
-  {
-    num: "01",
-    title: "Tipo de obra",
-    body: "Vial, industrial, energetica, Oil & Gas o urbanizacion.",
-  },
-  {
-    num: "02",
-    title: "Volumen estimado",
-    body: "Aunque sea aproximado - ayuda a dimensionar la propuesta.",
-  },
-  {
-    num: "03",
-    title: "Zona de entrega",
-    body: "Trabajamos Patagonia norte con logistica propia.",
-  },
-  {
-    num: "04",
-    title: "Linea de interes",
-    body: "Piezas industriales, Bloques HR, adoquines, bloques o postes pretensados.",
-  },
-];
-
-export default async function ContactoPage({
-  searchParams,
-}: ContactoPageProps) {
+export default async function ContactoPage({ searchParams }: ContactoPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const prefill = {
-    line: resolveSearchParam(resolvedSearchParams.line),
-    group: resolveSearchParam(resolvedSearchParams.group),
-    item: resolveSearchParam(resolvedSearchParams.item),
+    line:    resolveSearchParam(resolvedSearchParams.line),
+    group:   resolveSearchParam(resolvedSearchParams.group),
+    item:    resolveSearchParam(resolvedSearchParams.item),
     message: resolveSearchParam(resolvedSearchParams.message),
   };
+
   const contactSchema = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
@@ -93,134 +46,118 @@ export default async function ContactoPage({
     description:
       "Canal de contacto comercial para consultas por premoldeados, pretensados y proyectos especiales en Patagonia.",
     inLanguage: "es-AR",
-    about: {
-      "@type": "Corporation",
-      name: legalName,
-    },
+    about: { "@type": "Corporation", name: legalName },
   };
 
   return (
-    <div
-      className="relative z-10"
-      style={{ background: "#fffdf0", minHeight: "100vh" }}
-    >
+    <div className="relative z-10" style={{ background: "#fffdf0" }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }}
       />
       <SiteHeader />
 
-      <section
-        className="relative flex flex-col justify-center overflow-hidden"
-        style={{
-          minHeight: "calc(100svh - 60px)",
-        }}
-      >
-        <Image
-          src="/foto contacto.png"
-          alt="Contacto Cimalco Patagonia"
-          fill
-          priority
-          className="object-cover object-[72%_30%] sm:object-[center_30%]"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.5)_50%,rgba(0,0,0,0.88)_100%)]" />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
-        >
-          <span
-            className="font-display font-bold uppercase"
+      <div className="grid lg:min-h-[calc(100svh-60px)] lg:grid-cols-2">
+
+        {/* ── Left: Photo + copy ── */}
+        <div className="relative hidden overflow-hidden lg:block">
+          <Image
+            src="/foto contacto.png"
+            alt="Premoldeados de hormigón Cimalco Patagonia"
+            fill
+            className="object-cover object-center"
+            sizes="50vw"
+            priority
+          />
+
+          {/* Gradient — stronger left + bottom coverage */}
+          <div className="absolute inset-0"
             style={{
-              fontSize: "clamp(5rem,14vw,14rem)",
-              color: "rgba(255,255,255,0.05)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1,
-              marginBottom: "-0.1em",
-              marginRight: "-0.05em",
+              background: "linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.18) 100%)",
             }}
-          >
-            CONTACTO
-          </span>
-        </div>
-        <div className="relative z-10 px-5 py-16 sm:px-8 lg:px-10 lg:py-20">
-          <div className="mx-auto w-full max-w-[1600px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/36">
-              Contacto comercial
-            </p>
-            <h1 className="mt-2 max-w-[14ch] font-display text-[clamp(2.4rem,5vw,5rem)] uppercase leading-[0.92] tracking-[0.04em] text-white">
+          />
+          {/* Bottom fade for stats */}
+          <div className="absolute inset-x-0 bottom-0 h-48"
+            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.80) 0%, transparent 100%)" }}
+          />
+
+          {/* ── TOP: eyebrow + headline + description ── */}
+          <div className="absolute left-0 right-0 top-0 p-10 xl:p-14">
+            {/* Accent bar */}
+            <div className="mb-5 flex items-center gap-3">
+              <div className="h-px w-8 bg-brand-yellow" />
+              <p className="text-[10px] font-bold uppercase tracking-[0.38em] text-white/50">
+                Contacto comercial
+              </p>
+            </div>
+
+            <h1 className="font-display text-[clamp(2.8rem,4.5vw,5.2rem)] uppercase leading-[0.88] tracking-[0.02em] text-white">
               Hablemos de
-              <span className="block text-brand-yellow">tu proyecto.</span>
+              <span className="block" style={{ color: "#ffd239" }}>tu proyecto.</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
-              Te atendemos desde fabrica. Respuesta comercial directa y soporte
+
+            <p className="mt-6 max-w-[380px] text-[14px] leading-[1.8] text-white/55">
+              Te atendemos desde fábrica. Respuesta directa y soporte
               para obras de cualquier escala en Patagonia.
             </p>
           </div>
-        </div>
-      </section>
 
-      <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-8 sm:py-12 lg:px-10 lg:py-20">
-        <div className="mb-5 sm:mb-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/36">
-            Contacto comercial
-          </p>
-          <h2 className="mt-2 font-display text-[clamp(1.6rem,4vw,3.8rem)] uppercase leading-[0.9] tracking-[0.04em] text-brand-charcoal">
-            Contanos que necesita
-            <span className="block text-brand-yellow">tu obra.</span>
-          </h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-black/48 sm:text-base">
-            Completa el formulario y te respondemos en menos de 24 hs desde la
-            planta.
-          </p>
-        </div>
-
-        <div className="grid gap-6 xl:grid-cols-[1fr_2fr_1fr]">
-          <div className="hidden xl:flex flex-col gap-3">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-black/34">
-              Por que elegirnos
-            </p>
-            {trustItems.map(({ icon: Icon, label, value }) => (
-              <div
-                key={label}
-                className="rounded-[18px] border border-black/8 bg-white/80 p-4 shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
-              >
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-brand-yellow/16">
-                  <Icon className="h-4 w-4 text-brand-charcoal" />
+          {/* ── BOTTOM: stats row ── */}
+          <div className="absolute inset-x-0 bottom-0 px-10 pb-10 xl:px-14 xl:pb-12">
+            <div className="mb-6 h-px w-full" style={{ background: "rgba(255,255,255,0.12)" }} />
+            <div className="grid grid-cols-3 gap-6">
+              {[
+                { value: "60+", label: "Años fabricando" },
+                { value: "26.000 m²", label: "Planta Neuquén" },
+                { value: "Directa", label: "Atención desde planta" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <p className="font-display text-[1.5rem] uppercase leading-none tracking-tight text-white">
+                    {s.value}
+                  </p>
+                  <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/38">
+                    {s.label}
+                  </p>
                 </div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/34">
-                  {label}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-black/58">{value}</p>
-              </div>
-            ))}
-          </div>
-
-          <ContactForm prefill={prefill} />
-
-          <div className="hidden xl:flex flex-col gap-3">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-black/34">
-              Para completar mejor
-            </p>
-            {tipItems.map(({ num, title, body }) => (
-              <div
-                key={num}
-                className="rounded-[18px] border border-black/8 bg-white/80 p-4 shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
-              >
-                <span className="font-display text-[1.8rem] leading-none text-black/10">
-                  {num}
-                </span>
-                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-black/36">
-                  {title}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-black/52">{body}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </main>
 
-      <SiteFooter />
+
+        {/* ── Right: Form panel ── */}
+        <div
+          className="flex items-start justify-center px-5 py-6 sm:items-center sm:px-8 sm:py-8 lg:px-10 lg:py-10"
+          style={{
+            background: "#fffdf0",
+            backgroundImage:
+              "repeating-linear-gradient(-45deg, transparent 0px, transparent 20px, rgba(0,0,0,0.017) 20px, rgba(0,0,0,0.017) 21px)",
+          }}
+        >
+          <div className="w-full max-w-lg">
+
+            {/* Header above form */}
+            <div className="mb-5">
+              <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-black/32">
+                Formulario de consulta técnica
+              </p>
+              <h2 className="mt-1.5 font-display text-[clamp(1.4rem,2vw,1.95rem)] uppercase leading-tight tracking-[0.03em] text-brand-charcoal">
+                Completá tus datos.
+              </h2>
+              <p className="mt-1.5 text-[12.5px] leading-6 text-black/46">
+                Te respondemos en menos de 24 hs directamente desde la planta.
+              </p>
+
+              <div className="mt-4 h-px bg-black/[0.08]" />
+            </div>
+
+            <ContactForm prefill={prefill} />
+          </div>
+        </div>
+
+      </div>
+
+      <SiteFooter hideCta />
     </div>
   );
 }

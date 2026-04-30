@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { ArrowRight, X, ZoomIn } from "lucide-react";
 import type { CatalogColorOption, CatalogProduct } from "@/data/catalogo-2025";
-import { buildContactHref } from "@/lib/contact-prefill";
+import { buildWhatsAppHref } from "@/lib/contact-prefill";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,7 @@ export function CatalogProductCard({
   const selectedItemLabel = selectedColor
     ? `${product.title} ${selectedColor.label}`
     : product.title;
-  const contactHref = buildContactHref({ line, group: product.family, item: selectedItemLabel });
+  const contactHref = buildWhatsAppHref(selectedItemLabel);
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-black/8 bg-white/84 shadow-[0_14px_36px_rgba(0,0,0,0.05)]">
@@ -178,6 +178,8 @@ export function CatalogProductCard({
                       <Dialog.Close asChild>
                         <Button
                           href={contactHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           variant="accent"
                           className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
                           style={{ backgroundColor: accentColor, color: accentFg }}
@@ -272,6 +274,8 @@ export function CatalogProductCard({
         <div className="mt-auto pt-5">
           <Button
             href={contactHref}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="accent"
             className="w-full gap-2 px-5 py-3 text-[10px] tracking-[0.2em]"
             style={{ backgroundColor: accentColor, color: accentFg }}

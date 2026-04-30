@@ -6,10 +6,10 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 
 const metrics = [
-  { value: "1947", label: "Fundacion" },
-  { value: "26.000 m2", label: "Planta propia" },
-  { value: "IRAM", label: "Certificacion" },
-  { value: "Ley 3338", label: "Empresa Neuquina" },
+  { value: "60+", label: "Años de trayectoria" },
+  { value: "26.000 m²", label: "Planta industrial" },
+  { value: "IRAM", label: "Bloques y adoquines" },
+  { value: "Ley 3338", label: "Para Oil & Gas" },
 ];
 
 export function HeroSection() {
@@ -48,7 +48,7 @@ export function HeroSection() {
             className="max-w-[820px]"
           >
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.32em] text-white/56 sm:text-xs">
-              Cimalco Patagonia · Empresa Neuquina desde 1947
+              Cimalco Patagonia · Más de seis décadas en Patagonia
             </p>
 
             <h1 className="mt-3 font-display text-[clamp(2rem,4.8vw,5rem)] uppercase leading-[0.92] tracking-[0.02em] text-white">
@@ -61,15 +61,14 @@ export function HeroSection() {
             </p>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
-              Mas de seis decadas fabricando en Patagonia norte.
-              Unica planta regional con capacidad para postes de alta tension.
-              Cobertura desde Neuquen hasta Tierra del Fuego.
-              Certificacion IRAM. Habilitados con Ley 3338 para Oil & Gas.
+              Fabricamos postes pretensados, premoldeados para Oil & Gas, bloques,
+              adoquines y soluciones de hormigón a medida desde nuestra planta
+              industrial en Neuquén.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button href="/contacto" variant="accent" className="gap-2 px-8 py-4 text-[11px] tracking-[0.22em]">
-                Contactanos
+                Solicitar consulta técnica
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
