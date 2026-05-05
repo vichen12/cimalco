@@ -1,0 +1,4 @@
+Descripción;Ancho;Largo;Altura;Cantidad x m2;m2 x pallet;Opción color
+Uni 8;12;22;8;40;12,3;si
+Holanda 8;10;20;8;50;12,9;si
+Holanda 6;10;20;6;50;16,2;si

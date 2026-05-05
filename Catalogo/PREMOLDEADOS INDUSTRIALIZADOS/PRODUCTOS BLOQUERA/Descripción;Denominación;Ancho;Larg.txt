@@ -1,0 +1,7 @@
+Descripción;Denominación;Ancho;Largo;Altura;Cantidad x m2;Cantidad x pallet
+Bloque Liso de Hormigón;P20;19;39;19;12,5;90
+Bloque Liso de Hormigón en U;U20;19;39;19;12,5;90
+Medio Bloque Liso de Hormigón;M20;19;19;19;25;180
+Bloque Splitado de Hormigón;SP20;19;39;19;12,5;90
+Medio Bloque Splitado de Hormigón;MSP20;19;19;19;25;180
+Bloque Liso Murete de Hormigón;P10;9,5;39;19;12,5;180

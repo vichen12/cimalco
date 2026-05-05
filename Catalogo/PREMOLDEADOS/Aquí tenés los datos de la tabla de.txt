@@ -1,0 +1,7 @@
+Aquí tenés los datos de la tabla de Cámaras Típicas listos para copiar y pegar en tu archivo de texto:Datos Técnicos: Cámaras TípicasPlaintextCámara;A;B;C;a;b;e;Peso [Kg]
+C1;0,75;0,75;0,75;0,60;0,60;0,075;494,1
+C2;1,00;1,00;0,90;0,80;0,80;0,10;931,2
+C3;1,30;1,30;1,15;1,00;1,00;0,15;2264,4
+C4;1,50;1,50;1,35;1,20;1,20;0,15;3142,8
+C5;1,80;1,80;1,65;1,50;1,50;0,15;4730,4
+Resumen de dimensiones y pesos:Cámara C1: Dimensiones externas de 0,75 x 0,75 x 0,75 m con un peso de 494,1 Kg.Cámara C2: Dimensiones externas de 1,00 x 1,00 x 0,90 m con un peso de 931,2 Kg.Cámara C3: Dimensiones externas de 1,30 x 1,30 x 1,15 m con un peso de 2264,4 Kg.Cámara C4: Dimensiones externas de 1,50 x 1,50 x 1,35 m con un peso de 3142,8 Kg.Cámara C5: Dimensiones externas de 1,80 x 1,80 x 1,65 m con un peso de 4730,4 Kg.

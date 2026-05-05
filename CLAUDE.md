@@ -18,7 +18,10 @@ La prioridad no es hacer un sitio "bonito" generico, sino una landing que:
 - Razon social: `Cimalco Neuquen S.A.`
 - Rubro: premoldeados y pretensados de hormigon
 - Zona: Patagonia norte, Argentina
-- Propuesta general: hormigon industrial para infraestructura, urbanizacion, energia, Oil & Gas y piezas especiales
+- Dominio nuevo: `cimalcopatagonia.com.ar` (anterior: cimalconeuquen.com.ar)
+- Propuesta general: dos grandes verticales — Energia (Lineas Electricas + Oil & Gas) y Premoldeados de Hormigon (piezas industriales + Bloques HR + bloques + adoquines)
+- Certificacion clave: Empresa Neuquina Ley 3338
+- NO usar el concepto "hormigon industrial" — no es como se identifica la empresa
 
 ## Tono que debe sostener la web
 
@@ -114,22 +117,28 @@ La identidad ya viene definida. No reinterpretarla desde cero.
 - lineas con referencia IRAM cuando aplica
 - venta directa en esta etapa
 
-## Familias / verticales que deben seguir visibles
+## Familias / verticales actualizadas (post reunion abril 2026)
 
-Verticales:
+Dos verticales de operacion:
 
-- Energia
-- Oil & Gas
-- Vial y urbanizacion
-- Piezas especiales / desarrollos a medida
+1. Energia
+   - Lineas Electricas (postes pretensados — lo que mas los conocen)
+   - Oil & Gas (Vaca Muerta, premoldeados para yacimiento)
 
-Productos visibles:
+2. Premoldeados de Hormigon (actividad principal en crecimiento)
+   - Piezas industriales (camaras, bases, sleepers, Base para equipos AIB — producto estrella)
+   - Bloques HR (proteccion de erosiones — compite con colchonetas, enrocados, sistemas Maccaferi)
+   - Servicio de montajes de premoldeados y obras civiles
 
-- adoquines
-- bloques
-- camaras
-- postes
-- piezas especiales
+Productos de construccion:
+   - Bloques (mamposteria — compite con ladrillo ceramico)
+   - Adoquines (pavimento articulado — compite con asfalto, hormigon)
+   - Servicio de colocacion de adoquines
+
+Importante:
+- "Hormigon Industrial" NO es un concepto que usa la empresa
+- La seccion "Clientes y referencias" fue eliminada del sitio
+- Hay que agregar el logo de Empresa Neuquina Ley 3338 cuando el cliente lo entregue
 
 Productos mencionados en catalogo/brief:
 

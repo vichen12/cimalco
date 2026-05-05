@@ -1,0 +1,14 @@
+REVESTIMIENTOS:
+Producimos bloques, adoquines y revestimientos
+
+de canales aluvionales con procesos automati-
+zados que garantizan uniformidad y calidad
+
+constante.
+TIPO Peso Específico [kg/m3] Volumen [cm3] Volumen [m3] Peso Teórico [kg] Altura [m] Área [m2]
+HR 60 2320 1267,72 0,0013 2,94 0,06 0,021
+HR 80 2320 1707,00 0,0017 3,96 0,08 0,021
+HRD 100 2320 3333,99 0,0033 7,73 0,10 0,033
+HRD 120 2320 4042,15 0,0040 9,38 0,12 0,034
+HL 60 2320 3178,52 0,0032 7,37 0,06 0,053
+Loseta Coronamiento 2320 35000 0,0350 81,20 0,07 0,500
