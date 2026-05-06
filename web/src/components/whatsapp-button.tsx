@@ -1,5 +1,9 @@
 "use client";
 
+declare global {
+  interface Window { dataLayer: Record<string, unknown>[]; }
+}
+
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
 import { ArrowRight, Building2, Check, ChevronDown, MessageSquare, Phone, User, X } from "lucide-react";
@@ -80,6 +84,10 @@ export function WhatsAppButton() {
   const onSubmit = (values: FormValues) => {
     window.open(buildWaUrl(values), "_blank", "noopener,noreferrer");
     setSent(true);
+
+    // Google Ads conversion tracking
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "whatsapp_enviado" });
 
     fetch("/api/contact-quick", {
       method:  "POST",
